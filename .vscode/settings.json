@@ -8,5 +8,11 @@
   ],
   "python.testing.pyTestEnabled": false,
   "python.testing.nosetestsEnabled": false,
-  "python.testing.unittestEnabled": true
+  "python.testing.unittestEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.pep8Enabled": true,
+  "python.linting.pep8Args": [
+         "--ignore=E111,501",
+    ]
 }

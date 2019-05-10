@@ -1,13 +1,13 @@
-#TODO: This is just a test for unittest, will write actual tests when I have functions in the main 
-#program.
+# TODO: This is just a test for unittest, will write actual tests when I have functions in the main 
+# program.
+
+import mipfinder.mipfinder as mpf
 
 import unittest
 import os
 
 import sys
 sys.path.append(os.getenv('PWD'))
-
-import mipfinder.mipfinder as mpf
 
 # class TestAddOne(unittest.TestCase):
 
