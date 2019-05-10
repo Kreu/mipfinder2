@@ -26,7 +26,7 @@ def isBlast(string):
 	output.close()
 	try:
 		subprocess.check_output(('\"'+string+'\"makeblastdb.exe -dbtype prot -in testtest.txt'), shell=True)
-	except subprocess.CalledProcessError, e:
+  except subprocess.CalledProcessError, e:
 		msg = "%r does not point to blast folder (tested for makeblastdb.exe)" % string
 		subprocess.check_output(('del testtest.*'), shell=True)
 		raise argparse.ArgumentTypeError(msg)
