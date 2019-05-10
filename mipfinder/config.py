@@ -1,4 +1,7 @@
 import configparser
+import logging
+
+logging.getLogger(__name__)
 
 
 class Config:
@@ -6,22 +9,24 @@ class Config:
 
   def __init__(self, config_file):
     self.config_file = config_file
-    self.read_configuration(config_file)
+    self.readConfiguration(config_file)
+    self.verifyConfiguration()
 
-  def read_configuration(self, config_file):
+  def readConfiguration(self, config_file):
     """Reads and verifies configuration file for miPFinder
-    
+
     Reads in the user-defined configuration file and then verifies the parameters.
 
     Parameters:
       config_file: Path to the configuration file.
-    
+
     Return:
       None
 
     Raises:
     """
 
+    logging.info("Reading configuration file...")
     config = configparser.ConfigParser()
     config.read(config_file)
 
@@ -54,36 +59,29 @@ class Config:
     self.string_column = config['STRING']['STRING_column']
     self.string_min_score = config['STRING']['STRING_min_score']
 
-    self.verify_configuration()
-
-  def verify_configuration(self):
+  def verifyConfiguration(self):
     """Verifies that user configuration file has correct parameters"""
 
+    logging.info("Verifying configuration file...")
     if self.maximum_mip_length >= self.minimum_ancestor_length:
-      raise ValueError(f'In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length')
-    
-    # fastadbPATH = args['fastadb']
-    # species = args['species']
+      logging.info(f'In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.')
+      raise ValueError(f'In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.')
 
-    # ProteinGeneListName = args['ProteinGeneList']
-    # if ProteinGeneListName == None:
-    #   print '\nWARNING: Will not consider gene-protein relations\nRecommended: specify -p ProteinGeneList.tsv'
+    if not self.protein_gene_list:
+      logging.info(f'Warning: protein_gene_list parameter is not set in {self.config_file}. Will not consider gene-protein relations.')
 
-    # annotationdb = args['annotationdb']
-    # if annotationdb == None:
-    #   print '\nWARNING: Will not add protein annotations\nRecommended: specify -a AnnotationFile.tsv'
+    if not self.annotation:
+      logging.info(f'Warning: annotation parameter is not set in {self.config_file}. Will not add protein annotations.')
 
-    # PfamAdbPATH = args['PfamAdb']
-    # hmmscandb = args['hmmscandb']
-    # if hmmscandb == None and PfamAdbPATH != None:
-    #   hmmscandb = species+'_hmmscandb.txt'
-    #   print '\nWARNING: Going to do a hmmscan on all proteins, that may take some time!'
-    # if hmmscandb == None and PfamAdbPATH == None:
-    #   print '\nWARNING: Will not add domain information\nRecommended: specify -d Pfam-database.hmm'
-        
-    # iPfamdbPATH = args['iPfamdb']
-    # if iPfamdbPATH == None:
-    #   print '\nWARNING: iPfam database not specified, will not add domain interaction information\nRecommended: specify -i iPfam-database.tsv'	
-      
-    # if args['STRINGdb'] == None:
-    #   print '\nWARNING: STRING database not specified, will not add interaction information\nRecommended: specify -S STRING-database.txt'	
+    if not self.ipfam_database:
+      logging.info(f'warning: ipfam_database parameter is not set in {self.config_file}. Will not add domain interaction information.')
+
+    if not self.string_database:
+      logging.info(f'Warning: string_database parameter is not set in {self.config_file}. Will not add interaction information.')
+
+    # TODO: Check whether these two logical conditions can be simplified
+    if not self.hmmscan_database and self.pfam_database:
+      self.hmmscan_database = self.species_prefix + "_hmmscan_database.txt"
+      logging.info("Warning: hmmscan is being performed on all proteins. This can take a long time.")
+    if not self.hmmscan_database and not self.pfam_database:
+      logging.info(f'Warning: pfam_database parameter is not set in {self.config_file}. Will not add domain information.')
