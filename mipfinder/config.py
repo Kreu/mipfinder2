@@ -1,35 +1,42 @@
 import configparser
 import logging
+import os
 
 logging.getLogger(__name__)
 
-
 class Config:
-  """Test for doc"""
+  """Class to read in and verify the configuration file for miPFinder.
+  
+  Ensures that the configuration file is correctly read and that the parameters
+  have been set appropriately.
+
+  Args:
+    config_file (str): Path to the miPFinder configuration file 
+
+  Raises:
+    ValueError: If, in configuration file `maximum_mip_length` is larger or equal to `minimum_ancestor_length`.
+
+  """
 
   def __init__(self, config_file: str):
     self.config_file = config_file
-    self.readConfiguration()
-    self.verifyConfiguration()
+    self._readConfiguration()
+    self._verifyConfiguration()
 
-  def readConfiguration(self):
-    """Reads and verifies configuration file for miPFinder
-
-    Reads in the user-defined configuration file and then verifies the parameters.
-
-    Parameters:
-      config_file: Path to the configuration file.
-
-    Return:
-      None
-
+  def _readConfiguration(self):
+    """Read the configuration file for miPFinder.
+    
     Raises:
+      FileNotFoundError: If configuration file cannot be found.
+    
     """
-
-    logging.info("Reading configuration file...")
+    if not os.path.exists(self.config_file):
+      raise FileNotFoundError(f"{config_file} could not be found, aborting...")
+    
+    logging.info(f"Reading configuration file {self.config_file}...")
     config = configparser.ConfigParser()
     config.read(self.config_file)
-
+    
     # MIPFINDER configuration section
     self.protein_list : str = config['MIPFINDER']['protein_list']
     self.species_prefix : str = config['MIPFINDER']['species_prefix']
@@ -60,13 +67,17 @@ class Config:
     self.hmmsearch_path : str = config['PATHS']['hmmsearch_path']
 
     # STRING configuration section
-    self.string_database = config['STRING']['STRING_database']
-    self.string_column = config['STRING']['STRING_column']
-    self.string_min_score = config['STRING']['STRING_min_score']
+    self.string_database : str = config['STRING']['STRING_database']
+    self.string_column : str = config['STRING']['STRING_column']
+    self.string_min_score : str = config['STRING']['STRING_min_score']
 
-  def verifyConfiguration(self):
-    """Verifies that user configuration file has correct parameters"""
+  def _verifyConfiguration(self):
+    """Verify that user configuration file has correct parameters.
+    
+    Raises:
+      ValueError: If, in configuration file `maximum_mip_length` is larger or equal to `minimum_ancestor_length`.
 
+    """
     logging.info("Verifying configuration file...")
     if self.maximum_mip_length >= self.minimum_ancestor_length:
       logging.info(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
@@ -88,5 +99,6 @@ class Config:
     if not self.hmmscan_database and self.pfam_database:
       self.hmmscan_database = self.species_prefix + "_hmmscan_database.txt"
       logging.info("Warning: hmmscan is being performed on all proteins. This can take a long time.")
+
     if not self.hmmscan_database and not self.pfam_database:
       logging.info(f"Warning: pfam_database parameter is not set in {self.config_file}. Will not add domain information.")
