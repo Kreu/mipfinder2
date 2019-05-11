@@ -42,6 +42,4 @@ if __name__ == "__main__":
   # hmmscanPATH = '\"'+args['hmmPATH']+'hmmscan.exe\"'
   # clustalwPATH = '\"'+args['ClustalPATH']+'clustalw2.exe\"'
 
-# IDlist = args['IDlist'].split(';')
-
 # print '\nArguments:\n'+str(args).replace(',','\n')+'\nParsed arguments successfully, all tested dependencies are available'
