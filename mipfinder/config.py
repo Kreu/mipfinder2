@@ -9,7 +9,7 @@ class Config:
 
   def __init__(self, config_file: str):
     self.config_file = config_file
-    self.readConfiguration(config_file)
+    self.readConfiguration()
     self.verifyConfiguration()
 
   def readConfiguration(self):
@@ -41,23 +41,23 @@ class Config:
     self.c_value_cutoff : float = float(config['MIPFINDER']['c_value_cutoff'])
 
     # TODO: Rename these files
-    self.mostSIMILARcutoff = config['MIPFINDER']['mostSIMILARcutoff']
-    self.open_gap_penalty = config['MIPFINDER']['open_gap_penalty']
-    self.maxMIPgroupSIZE = config['MIPFINDER']['maxMIPgroupSIZE']
-    self.dropfile = config['MIPFINDER']['dropfile']
+    self.mostSIMILARcutoff : str = config['MIPFINDER']['mostSIMILARcutoff']
+    self.open_gap_penalty : str = config['MIPFINDER']['open_gap_penalty']
+    self.maxMIPgroupSIZE : int  = int(config['MIPFINDER']['maxMIPgroupSIZE'])
+    self.dropfile : str = config['MIPFINDER']['dropfile']
 
     # DATA configuration section
-    self.hmmscan_database = config['DATA']['hmmscan_database']
-    self.pfam_database = config['DATA']['pfam_database']
-    self.ipfam_database = config['DATA']['ipfam_database']
-    self.protein_gene_list = config['DATA']['protein_gene_list']
-    self.annotation = config['DATA']['annotation']
-    self.known_microproteins = config['DATA']['known_microproteins']
+    self.hmmscan_database : str = config['DATA']['hmmscan_database']
+    self.pfam_database : str = config['DATA']['pfam_database']
+    self.ipfam_database : str = config['DATA']['ipfam_database']
+    self.protein_gene_list : str = config['DATA']['protein_gene_list']
+    self.annotation : str = config['DATA']['annotation']
+    self.known_microproteins : str = config['DATA']['known_microproteins']
 
     # PATHS configuration section
-    self.blast_path = config['PATHS']['blast_path']
-    self.clustal_path = config['PATHS']['clustal_path']
-    self.hmmsearch_path = config['PATHS']['hmmsearch_path']
+    self.blast_path : str = config['PATHS']['blast_path']
+    self.clustal_path : str = config['PATHS']['clustal_path']
+    self.hmmsearch_path : str = config['PATHS']['hmmsearch_path']
 
     # STRING configuration section
     self.string_database = config['STRING']['STRING_database']

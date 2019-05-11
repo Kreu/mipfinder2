@@ -25,6 +25,7 @@ if __name__ == "__main__":
   # Read configuration file (previously ArgParse CLI)
   config = Config('./mipfinder/config.ini')
 
+  config.protein_list = int(5)
 
 # (Valdeko, 10/05/2019) TODO: Potentially move them into a configuration file and have three different variables? I don't know if
 # there variables are used for more than this or if this is it. 
