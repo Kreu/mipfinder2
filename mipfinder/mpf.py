@@ -3,10 +3,11 @@
 WIP WIP WIP WIP
 """
 
-from mipfinder.config import Config
+import config
 import logging
 import datetime
 import os
+import typing
 
 # Set up logging configuration
 logging.getLogger(__name__)
@@ -21,16 +22,17 @@ if __name__ == "__main__":
   logging.debug(f"Working directory is {os.getcwd()}")
 
   # TODO: Maybe rewrite using ConfigArgParser module rather than configuration file? Not important atm
-  # TODO: Change back to 'config.ini' in the final version. Can't get VS Code to run the script from the subdir
   # Read configuration file (previously ArgParse CLI)
-  configuration = Config('./mipfinder/config.ini')
+  configuration = config.Config('config.ini')
 
-  configuration.protein_list = int(5)
-
-  def getKnownMicroproteins(microprotein_list : str):
-    """Extracts a list of known microprotein IDs from """ 
-    pass 
-  configuration.known_microproteins
+  # TODO: Write a unit test for this
+  def getKnownMicroproteins(microprotein_list: str) -> typing.List[str]:
+    """Extract known microprotein IDs from a file into a list.""" 
+    known_microproteins = []
+    with open(microprotein_list, 'r') as f:
+      for line in f:
+        known_microproteins.append(f)
+    return known_microproteins 
 
   # (Valdeko, 10/05/2019) TODO: Potentially move them into a configuration file and have three different variables? I don't know if
   # there variables are used for more than this or if this is it. 
