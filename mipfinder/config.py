@@ -55,12 +55,17 @@ class Config:
     self.annotation : str = config['DATA']['annotation']
     self.known_microproteins : str = config['DATA']['known_microproteins']
 
+    # PACKAGE configuration section
+    self.hmmer_package : str = config['PACKAGE']['hmmer_package']
+    self.blast_package : str = config['PACKAGE']['blast_package']
+    self.clustalo_package : str = config['PACKAGE']['clustalo_package']
+
     # PATHS configuration section
-    self.blast_path : str = config['PATHS']['blast_path']
-    self.clustal_path : str = config['PATHS']['clustal_path']
-    self.hmmsearch_path : str = config['PATHS']['hmmsearch_path']
-    self.hmmbuild_path : str = config['PATHS']['hmmbuild_path']
-    self.hmmscan_path : str = config['PATHS']['hmmscan_path']
+    # self.blast_path : str = config['PATHS']['blast_path']
+    # self.clustal_path : str = config['PATHS']['clustal_path']
+    # self.hmmsearch_path : str = config['PATHS']['hmmsearch_path']
+    # self.hmmbuild_path : str = config['PATHS']['hmmbuild_path']
+    # self.hmmscan_path : str = config['PATHS']['hmmscan_path']
 
     # STRING configuration section
     self.string_database : str = config['STRING']['STRING_database']
@@ -90,18 +95,10 @@ class Config:
     ##########################
 
     # Check whether all programs (clustalw2, hmmscan etc) are present on the system
-    # TODO: REENABLE CHECKS ONCE THEY ARE INSTALLED
-    # _fileExists(self.hmmbuild_path)
-    # _fileExists(self.hmmscan_path)
-    # _fileExists(self.hmmsearch_path)
-    # _fileExists(self.clustal_path)
-
-    # # TODO (12/05/2019, Valdeko): blast_path should point to an executable, not a folder...
-    # if not os.path.exists(self.blast_path):
-    #   logging.error(f"{self.blast_path} does not refer to a valid file location, aborting...")
-    #   raise FileNotFoundError(f"{self.blast_path} does not refer to a valid file location, aborting...")
-
-    # logging.info("All dependencdies detected.") 
+    _packageInstalled(self.hmmer_package)
+    _packageInstalled(self.clustalo_package)
+    _packageInstalled(self.blast_package)
+    logging.info("All dependencdies detected.") 
     
     ##########################
     #   OPTIONAL VARIABLES   #
