@@ -66,6 +66,8 @@ class Config:
     self.blast_path : str = config['PATHS']['blast_path']
     self.clustal_path : str = config['PATHS']['clustal_path']
     self.hmmsearch_path : str = config['PATHS']['hmmsearch_path']
+    self.hmmbuild_path : str = config['PATHS']['hmmbuild_path']
+    self.hmmscan_path : str = config['PATHS']['hmmscan_path']
 
     # STRING configuration section
     self.string_database : str = config['STRING']['STRING_database']
