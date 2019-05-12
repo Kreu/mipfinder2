@@ -27,7 +27,6 @@ def getKnownMicroproteins(microprotein_list: str) -> typing.List[str]:
       known_microproteins.append(f)
   return known_microproteins 
 
-
 ######################
 #   MIPFINDER v2.0   #
 ######################
