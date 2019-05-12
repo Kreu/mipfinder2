@@ -55,17 +55,12 @@ class Config:
     self.annotation : str = config['DATA']['annotation']
     self.known_microproteins : str = config['DATA']['known_microproteins']
 
-    # PACKAGE configuration section
-    self.hmmer_package : str = config['PACKAGE']['hmmer_package']
-    self.blast_package : str = config['PACKAGE']['blast_package']
-    self.clustalo_package : str = config['PACKAGE']['clustalo_package']
-
-    # PATHS configuration section
-    # self.blast_path : str = config['PATHS']['blast_path']
-    # self.clustal_path : str = config['PATHS']['clustal_path']
-    # self.hmmsearch_path : str = config['PATHS']['hmmsearch_path']
-    # self.hmmbuild_path : str = config['PATHS']['hmmbuild_path']
-    # self.hmmscan_path : str = config['PATHS']['hmmscan_path']
+    # PATH configuration section
+    self.blast_path : str = config['PATH']['blast_path']
+    self.clustalo_path : str = config['PATH']['clustalo_path']
+    self.hmmsearch_path : str = config['PATH']['hmmsearch_path']
+    self.hmmbuild_path : str = config['PATH']['hmmbuild_path']
+    self.hmmscan_path : str = config['PATH']['hmmscan_path']
 
     # STRING configuration section
     self.string_database : str = config['STRING']['STRING_database']
@@ -74,7 +69,7 @@ class Config:
 
   def _verifyConfiguration(self):
     """Verify that user configuration file has correct parameters.
-    hmmer
+    
     Raises:
       ValueError: If, in configuration file `maximum_mip_length` is larger or equal to 
                   `minimum_ancestor_length`.
@@ -82,24 +77,16 @@ class Config:
     """
     logging.info("Verifying configuration file...")
 
-
-
-    # TODO (11/05/2018, Valdeko): See which variables are optional and which are absolutely and do
-    # checking based on that
-    # ######ARGUMENT PARSER & VERIFICATION
-    # os.environ["CYGWIN"] = "nodosfilewarning" #avoid hmmer warnings
-    # currentPATH = os.getcwd().replace('\\','/')
-
     ##########################
     #   REQUIRED VARIABLES   #
     ##########################
 
-    # Check whether all programs (clustalw2, hmmscan etc) are present on the system
-    _packageInstalled(self.hmmer_package)
-    _packageInstalled(self.clustalo_package)
-    _packageInstalled(self.blast_package)
-    logging.info("All dependencdies detected.") 
-    
+    _fileExists(self.hmmbuild_path)
+    _fileExists(self.hmmscan_path)
+    _fileExists(self.hmmsearch_path)
+    _fileExists(self.clustalo_path)
+    logging.info("All required dependencies detected.") 
+
     ##########################
     #   OPTIONAL VARIABLES   #
     ##########################
@@ -143,17 +130,3 @@ def _fileExists(filename: str):
   if not os.path.isfile(filename):
     logging.error(f"{filename} does not refer to a valid file location, aborting...")
     raise FileNotFoundError(f"{filename} does not refer to a valid file location, aborting...")
-
-def _packageInstalled(package_name: str):
-  """Check whether a package is installed on the system.
-
-  Raises:
-    FileNotFoundError: If a given package is not installed.
-
-  """
-  cache = apt.Cache()
-  if cache[package_name].is_installed:
-    logging.info(f"{package_name} installation detected")
-  else:
-    logging.error(f"{package_name} installation not detected, aborting...")
-    raise FileNotFoundError(f"{package_name} installation not detected, aborting...")
