@@ -4,9 +4,11 @@ WIP WIP WIP WIP
 """
 
 import config
+
 import logging
 import datetime
 import os
+import sys
 import typing
 
 # Set up logging configuration
@@ -16,30 +18,29 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode = 'w',
                     format='%(name)s:%(levelname)s:%(message)s')
 
+# TODO: Write a unit test for this
+def getKnownMicroproteins(microprotein_list: str) -> typing.List[str]:
+  """Extract known microprotein IDs from a file into a list.""" 
+  known_microproteins = []
+  with open(microprotein_list, 'r') as f:
+    for line in f:
+      known_microproteins.append(f)
+  return known_microproteins 
+
+
+######################
+#   MIPFINDER v2.0   #
+######################
+
 if __name__ == "__main__":
-  logging.info("Starting miPFinder v2.0")
+  logging.info("Starting MIPFINDER v2.0")
+  # TODO (12/05/2019, Valdeko): Format the datetime to get rid of microseconds
   logging.info(f"Starting at {datetime.datetime.now()}")
   logging.debug(f"Working directory is {os.getcwd()}")
 
   # TODO: Maybe rewrite using ConfigArgParser module rather than configuration file? Not important atm
-  # Read configuration file (previously ArgParse CLI)
   configuration = config.Config('config.ini')
 
-  # TODO: Write a unit test for this
-  def getKnownMicroproteins(microprotein_list: str) -> typing.List[str]:
-    """Extract known microprotein IDs from a file into a list.""" 
-    known_microproteins = []
-    with open(microprotein_list, 'r') as f:
-      for line in f:
-        known_microproteins.append(f)
-    return known_microproteins 
+  getKnownMicroproteins(configuration.known_microproteins)
 
-  # (Valdeko, 10/05/2019) TODO: Potentially move them into a configuration file and have three different variables? I don't know if
-  # there variables are used for more than this or if this is it. 
-  # blastPATH = '\"'+args['blastPATH']+'\"'
-  # hmmsearchPATH = '\"'+args['hmmPATH']+'hmmsearch.exe\"'
-  # hmmbuildPATH = '\"'+args['hmmPATH']+'hmmbuild.exe\"'
-  # hmmscanPATH = '\"'+args['hmmPATH']+'hmmscan.exe\"'
-  # clustalwPATH = '\"'+args['ClustalPATH']+'clustalw2.exe\"'
 
-# print '\nArguments:\n'+str(args).replace(',','\n')+'\nParsed arguments successfully, all tested dependencies are available'
