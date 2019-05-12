@@ -1,21 +1,18 @@
 # TODO: This is just a test for unittest, will write actual tests when I have functions in the main 
 # program.
 
-import mipfinder.mipfinder as mpf
+import mipfinder.mpf as mpf
 
 import unittest
 import os
 
 import sys
-sys.path.append(os.getenv('PWD'))
+sys.path.append(os.getenv('PWD', ""))
 
-# class TestAddOne(unittest.TestCase):
+class TestgetKnownMicroproteins (unittest.TestCase):
 
-# 	def setUp(self):
-# 		pass
-
-# 	def test_one(self):
-# 	  self.assertEqual(mpf.addOne(1), 2)
+	def setUp(self):
+		pass
 
 # 	def test_two(self):
 # 		self.assertEqual(mpf.addOne(2), 3)
