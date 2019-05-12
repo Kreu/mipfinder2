@@ -1,6 +1,7 @@
 import configparser
 import logging
 import os
+import apt
 
 logging.getLogger(__name__)
 
@@ -76,6 +77,8 @@ class Config:
     """
     logging.info("Verifying configuration file...")
 
+
+
     # TODO (11/05/2018, Valdeko): See which variables are optional and which are absolutely and do
     # checking based on that
     # ######ARGUMENT PARSER & VERIFICATION
@@ -143,3 +146,18 @@ def _fileExists(filename: str):
   if not os.path.isfile(filename):
     logging.error(f"{filename} does not refer to a valid file location, aborting...")
     raise FileNotFoundError(f"{filename} does not refer to a valid file location, aborting...")
+
+def _packageInstalled(package_name: str):
+  """Check whether a package is installed on the system.
+
+  Raises:
+    FileNotFoundError: If a given package is not installed.
+
+  """
+
+  cache = apt.Cache()
+  if cache[package_name].is_installed:
+    logging.info(f"{package_name} installation detected")
+  else:
+    logging.error(f"{package_name} installation not detected, aborting...")
+    raise FileNotFoundError(f"{package_name} installation not detected, aborting...")
