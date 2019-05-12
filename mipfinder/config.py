@@ -69,7 +69,7 @@ class Config:
 
   def _verifyConfiguration(self):
     """Verify that user configuration file has correct parameters.
-    
+    hmmer
     Raises:
       ValueError: If, in configuration file `maximum_mip_length` is larger or equal to 
                   `minimum_ancestor_length`.
@@ -154,7 +154,6 @@ def _packageInstalled(package_name: str):
     FileNotFoundError: If a given package is not installed.
 
   """
-
   cache = apt.Cache()
   if cache[package_name].is_installed:
     logging.info(f"{package_name} installation detected")
