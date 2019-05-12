@@ -25,14 +25,9 @@ class Config:
     logging.info(f"{self.config_file} read successfully")
 
   def _readConfiguration(self):
-    """Read the configuration file for miPFinder.
-    
-    Raises:
-      FileNotFoundError: If configuration file cannot be found.
-    
-    """
-    if not os.path.exists(self.config_file):
-        raise FileNotFoundError(f"{self.config_file} could not be found, aborting...")
+    """Read the configuration file for miPFinder."""
+
+    _fileExists(self.config_file)
     
     logging.info(f"Reading configuration file ({self.config_file})...")
     config = configparser.ConfigParser()
@@ -90,18 +85,24 @@ class Config:
     # os.environ["CYGWIN"] = "nodosfilewarning" #avoid hmmer warnings
     # currentPATH = os.getcwd().replace('\\','/')
 
+    ##########################
+    #   REQUIRED VARIABLES   #
+    ##########################
+
     # Check whether all programs (clustalw2, hmmscan etc) are present on the system
-    # TODO (12/05/2019, Valdeko): blast_path should point to an executable, not a folder...
     _fileExists(self.hmmbuild_path)
     _fileExists(self.hmmscan_path)
     _fileExists(self.hmmsearch_path)
     _fileExists(self.clustal_path)
 
+    # TODO (12/05/2019, Valdeko): blast_path should point to an executable, not a folder...
     if not os.path.exists(self.blast_path):
       logging.error(f"{self.blast_path} does not refer to a valid file location, aborting...")
       raise FileNotFoundError(f"{self.blast_path} does not refer to a valid file location, aborting...")
 
-
+    ##########################
+    #   OPTIONAL VARIABLES   #
+    ##########################
 
     if self.maximum_mip_length >= self.minimum_ancestor_length:
       logging.error(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
@@ -130,10 +131,10 @@ class Config:
 
 # Helper functions for Config class
 
-def _fileExists(filename):
+def _fileExists(filename: str):
   """Check whether file exists.
 
-  Helper function to check whether file exists. Incorporates logging.
+  Helper function to check whether file exists, with incorporated logging.
 
   Raises:
     FileNotFoundError: If file cannot be found.
@@ -143,5 +144,4 @@ def _fileExists(filename):
     logging.error(f"{filename} does not refer to a valid file location, aborting...")
     raise FileNotFoundError(f"{filename} does not refer to a valid file location, aborting...")
  
-
     # print '\nArguments:\n'+str(args).replace(',','\n')+'\nParsed arguments successfully, all tested dependencies are available'
