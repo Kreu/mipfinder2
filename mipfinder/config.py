@@ -90,65 +90,21 @@ class Config:
     # os.environ["CYGWIN"] = "nodosfilewarning" #avoid hmmer warnings
     # currentPATH = os.getcwd().replace('\\','/')
 
+    # Check whether all programs (clustalw2, hmmscan etc) are present on the system
+    # TODO (12/05/2019, Valdeko): blast_path should point to an executable, not a folder...
+    _fileExists(self.hmmbuild_path)
+    _fileExists(self.hmmscan_path)
+    _fileExists(self.hmmsearch_path)
+    _fileExists(self.clustal_path)
 
-    # def isFile(string):
-        # if os.path.isfile(string) == False:
-    #         msg = "%r does not exist" % string
-    #         raise argparse.ArgumentTypeError(msg)
-    #     return string
-    # def isBlast(string):
-    # 	output = open('testtest.txt','w')
-    # 	output.write('>1\nCRTTATPMWRG\n>2\nCNTTKTPLWRS')
-    # 	output.close()
-    # 	try:
-    # 		subprocess.check_output(('\"'+string+'\"makeblastdb.exe -dbtype prot -in testtest.txt'), shell=True)
-    #   except subprocess.CalledProcessError, e:
-    # 		msg = "%r does not point to blast folder (tested for makeblastdb.exe)" % string
-    # 		subprocess.check_output(('del testtest.*'), shell=True)
-    # 		raise argparse.ArgumentTypeError(msg)
-    # 	return string
-    # def isClustal(string):
-    # 	output = open('testtest.txt','w')
-    # 	output.write('>1\nCRTTATPMWRG\n>2\nCNTTKTPLWRS')
-    # 	output.close()
-    # 	try:
-    # 		subprocess.check_output(('\"'+string+'\"clustalw2.exe -INFILE=testtest.txt -ALIGN -TYPE=PROTEIN -OUTFILE=testtest.txt'), shell=True)
-    # 	except subprocess.CalledProcessError, e:
-    # 		msg = "%r does not point to clustalw2 folder" % string
-    # 		subprocess.check_output(('del testtest.*'), shell=True)
-    # 		raise argparse.ArgumentTypeError(msg)
-    # 	return string
-    # def isHmmer(string):
-    # 	output = open('testtest.txt','w')
-    # 	output.write('1 MKVRSSVKKMCEFCKTVKRRGR\n2 MKIRASVRKICEKCRLIRRRGR')
-    # 	output.close()
-    # 	try:
-    # 		subprocess.check_output(('\"'+string+'hmmbuild.exe\" --amino testtest.txt '+currentPATH+'/testtest.txt'), shell=True)
-    # 	except subprocess.CalledProcessError, e:
-    # 		msg = "%r does not point to Hmmer folder (tested for hmmbuild.exe)"
-    # 		subprocess.check_output(('del testtest.*'), shell=True)
-    # 		raise argparse.ArgumentTypeError(msg)
-    # 	subprocess.check_output(('del testtest.*'), shell=True)
-    # 	return string
-    # def isInt(string):
-    # 	try:
-    # 		int(string)
-    # 	except:
-    # 		msg = "%r is not recognized as Integer, but must be!" % string
-    # 		raise argparse.ArgumentTypeError(msg)
-    # 	return int(string)
-    # def isFloat(string):
-    # 	try:
-    # 		float(string)
-    # 	except:
-    # 		msg = "%r is not recognized as Float, but must be!" % string
-    # 		raise argparse.ArgumentTypeError(msg)
-    # 	return float(string)
+    if not os.path.exists(self.blast_path):
+      logging.error(f"{self.blast_path} does not refer to a valid file location, aborting...")
+      raise FileNotFoundError(f"{self.blast_path} does not refer to a valid file location, aborting...")
 
 
 
     if self.maximum_mip_length >= self.minimum_ancestor_length:
-      logging.info(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
+      logging.error(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
       raise ValueError(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
 
     if not self.protein_gene_list:
@@ -173,12 +129,19 @@ class Config:
 
 
 # Helper functions for Config class
-def _fileExists(filename: str) -> bool:
-  """Check whether a file exists.
 
-  Returns:
-    bool: True is file exists, otherwise False.
-  
+def _fileExists(filename):
+  """Check whether file exists.
+
+  Helper function to check whether file exists. Incorporates logging.
+
+  Raises:
+    FileNotFoundError: If file cannot be found.
+
   """
-  return os.path.exists(filename)
+  if not os.path.isfile(filename):
+    logging.error(f"{filename} does not refer to a valid file location, aborting...")
+    raise FileNotFoundError(f"{filename} does not refer to a valid file location, aborting...")
+ 
 
+    # print '\nArguments:\n'+str(args).replace(',','\n')+'\nParsed arguments successfully, all tested dependencies are available'
