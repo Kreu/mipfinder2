@@ -1,0 +1,6 @@
+{
+  "include": [ ".", "mipfinder", "tests" ],
+
+  "pythonVersion": "3.6",
+  "pythonPlatform": "Linux"
+} 
