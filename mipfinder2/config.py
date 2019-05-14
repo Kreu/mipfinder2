@@ -61,9 +61,9 @@ class Config:
     self.hmmscan_path : str = config['PATH']['hmmscan_path']
 
     # STRING configuration section
-    self.string_database : str = config['STRING']['STRING_database']
-    self.string_column : str = config['STRING']['STRING_column']
-    self.string_min_score : str = config['STRING']['STRING_min_score']
+    self.STRING_database : str = config['STRING']['STRING_database']
+    self.STRING_column : str = config['STRING']['STRING_column']
+    self.STRING_min_score : str = config['STRING']['STRING_min_score']
 
   def _verifyConfiguration(self):
     """Verify that user configuration file has correct parameters.
