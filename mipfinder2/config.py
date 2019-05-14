@@ -45,7 +45,7 @@ class Config:
     self.dropfile : str = config['MIPFINDER']['dropfile']
 
     # DATA configuration section
-    self.protein_list : str = config['DATA']['protein_list']
+    self.organism_protein_list : str = config['DATA']['organism_protein_list']
     self.hmmscan_database : str = config['DATA']['hmmscan_database']
     self.pfam_database : str = config['DATA']['pfam_database']
     self.ipfam_database : str = config['DATA']['ipfam_database']
@@ -83,6 +83,7 @@ class Config:
     _fileExists(self.hmmscan_path)
     _fileExists(self.hmmsearch_path)
     _fileExists(self.clustalo_path)
+    _fileExists(self.organism_protein_list)
     logging.info("All required dependencies detected.") 
 
     ##########################

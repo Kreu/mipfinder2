@@ -14,6 +14,16 @@ class TestgetKnownMicroproteins (unittest.TestCase):
 	def setUp(self):
 		pass
 
+	def testNormalFile(self):
+		with open("test_mip.txt", "w") as f:
+			f.write("MIP1")
+			f.write("MIP2")
+			f.write("MIP3")
+		
+		self.assertEqual(mpf.getKnownMicroproteins("test_mip.txt"), ["MIP1", "MIP2", "MIP3"])
+		os.remove("test_mip.txt")
+
+
 # 	def test_two(self):
 # 		self.assertEqual(mpf.addOne(2), 3)
 
