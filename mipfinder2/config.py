@@ -50,7 +50,7 @@ class Config:
     self.pfam_database : str = config['DATA']['pfam_database']
     self.ipfam_database : str = config['DATA']['ipfam_database']
     self.protein_gene_list : str = config['DATA']['protein_gene_list']
-    self.annotation : str = config['DATA']['annotation']
+    self.annotation_file : str = config['DATA']['annotation_file']
     self.known_microproteins : str = config['DATA']['known_microproteins']
 
     # PATH configuration section
@@ -96,8 +96,8 @@ class Config:
     if not self.protein_gene_list:
       logging.info(f"Warning: protein_gene_list parameter is not set in {self.config_file}. Will not consider gene-protein relations.")
 
-    if not self.annotation:
-      logging.info(f"Warning: annotation parameter is not set in {self.config_file}. Will not add protein annotations.")
+    if not self.annotation_file:
+      logging.info(f"Warning: annotation_file parameter is not set in {self.config_file}. Will not add protein annotations.")
 
     if not self.ipfam_database:
       logging.info(f"Warning: ipfam_database parameter is not set in {self.config_file}. Will not add domain interaction information.")
