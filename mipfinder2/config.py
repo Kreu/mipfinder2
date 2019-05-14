@@ -89,20 +89,29 @@ class Config:
     #   OPTIONAL VARIABLES   #
     ##########################
 
+    # TODO (14/05/2019): Verify that set optional variables actually point to valid files!
     if self.maximum_mip_length >= self.minimum_ancestor_length:
       logging.error(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
       raise ValueError(f"In {self.config_file}, maximum_mip_length must be smaller than the minimum_ancestor_length.")
 
-    if not self.protein_gene_list:
+    if self.protein_gene_list:
+      _fileExists(self.protein_gene_list)
+    else:
       logging.info(f"Warning: protein_gene_list parameter is not set in {self.config_file}. Will not consider gene-protein relations.")
 
-    if not self.annotation_file:
+    if self.annotation_file:
+      _fileExists(self.annotation_file)
+    else:
       logging.info(f"Warning: annotation_file parameter is not set in {self.config_file}. Will not add protein annotations.")
 
-    if not self.ipfam_database:
+    if self.ipfam_database:
+      _fileExists(self.ipfam_database)
+    else:
       logging.info(f"Warning: ipfam_database parameter is not set in {self.config_file}. Will not add domain interaction information.")
 
-    if not self.string_database:
+    if self.STRING_database:
+      _fileExists(self.STRING_database)
+    else:
       logging.info(f"Warning: string_database parameter is not set in {self.config_file}. Will not add interaction information.")
 
     # TODO: Check whether these two logical conditions can be simplified
@@ -125,6 +134,9 @@ def _fileExists(filename: str):
     FileNotFoundError: If file cannot be found.
 
   """
+  if os.path.isfile(filename):
+    logging.info(f"{filename} found.")
+
   if not os.path.isfile(filename):
     logging.error(f"{filename} does not refer to a valid file location, aborting...")
     raise FileNotFoundError(f"{filename} does not refer to a valid file location, aborting...")
