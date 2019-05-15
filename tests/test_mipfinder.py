@@ -1,31 +1,65 @@
 # TODO: This is just a test for unittest, will write actual tests when I have functions in the main 
 # program.
 
-import mipfinder.mpf as mpf
-
 import unittest
 import os
 
 import sys
-sys.path.append(os.getenv('PWD', ""))
+# Hacky way of doing it, for some reason relative imports don't work
+sys.path.insert(0, "/home/troy/Documents/git/mipfinder2/mipfinder2")
 
-class TestgetKnownMicroproteins (unittest.TestCase):
+import mpf
+
+class TestextractFastaRecord (unittest.TestCase):
 
 	def setUp(self):
 		pass
 
+	def testValidInput(self):
+		with open("test_fasta.txt", 'w') as f:
+			f.write(">1\nTEST1\n")
+			f.write(">2\nTEST2\n")
+			f.write(">3\nTEST3\n")
+			f.write(">4\nTEST4")
+		
+		expected_results = {">1": "TEST1",
+												">2": "TEST2",
+												">3": "TEST3",
+												">4": "TEST4"
+		}
+
+		self.assertEqual(mpf.extractFastaRecords("test_fasta.txt"), expected_results)
+		os.remove("test_fasta.txt")
+
+	def testMalFormedInput(self):
+		with open("test_fasta.txt", 'w') as f:
+			f.write("Erroneous line\n")
+			f.write(">1\nTEST1\n")
+			f.write(">2\nTEST2\n")
+			f.write(">3\nTEST3\n")
+			f.write(">4\nTEST4")
+		
+		expected_results = {">1": "TEST1",
+												">2": "TEST2",
+												">3": "TEST3",
+												">4": "TEST4"
+		}
+
+		self.assertEqual(mpf.extractFastaRecords("test_fasta.txt"), expected_results)
+		os.remove("test_fasta.txt")
+
+class TestgetKnownMicroproteins (unittest.TestCase):
+
+	def setUp(self):
+		self.expected_list = ["MIP1", "MIP2", "MIP3"]
+		pass
+
 	def testNormalFile(self):
 		with open("test_mip.txt", "w") as f:
-			f.write("MIP1")
-			f.write("MIP2")
-			f.write("MIP3")
+			f.write("MIP1\nMIP2\nMIP3")
 		
-		self.assertEqual(mpf.getKnownMicroproteins("test_mip.txt"), ["MIP1", "MIP2", "MIP3"])
+		self.assertListEqual(mpf.getKnownMicroproteins("test_mip.txt"), self.expected_list)
 		os.remove("test_mip.txt")
-
-
-# 	def test_two(self):
-# 		self.assertEqual(mpf.addOne(2), 3)
 
 # 	def test_string(self):
 # 		with self.assertRaises(TypeError):
