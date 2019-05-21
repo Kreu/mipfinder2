@@ -79,12 +79,12 @@ class Config:
     #   REQUIRED VARIABLES   #
     ##########################
 
-    _fileExists(self.hmmbuild_path)
-    _fileExists(self.hmmscan_path)
-    _fileExists(self.hmmsearch_path)
-    _fileExists(self.clustalo_path)
-    _fileExists(self.organism_protein_list)
-    logging.info("All required dependencies detected.") 
+    # _fileExists(self.hmmbuild_path)
+    # _fileExists(self.hmmscan_path)
+    # _fileExists(self.hmmsearch_path)
+    # _fileExists(self.clustalo_path)
+    # _fileExists(self.organism_protein_list)
+    # logging.info("All required dependencies detected.") 
 
     ##########################
     #   OPTIONAL VARIABLES   #
