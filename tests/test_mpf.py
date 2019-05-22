@@ -6,7 +6,7 @@ import os
 import sys
 
 # Hacky way of doing it, for some reason relative imports don't work
-sys.path.insert(0, "/media/troy/Data/Valdeko/documents/git/mipfinder2/mipfinder2")
+# sys.path.insert(0, "/media/troy/Data/Valdeko/documents/git/mipfinder2/mipfinder2")
 
 
 import protein
