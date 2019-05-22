@@ -1,3 +1,6 @@
+import typing
+import logging
+
 # TODO: Write unit tests for this
 def createFastaFile(sequences: dict, output: str):
   """Creates a FASTA file from the supplied protein IDs and sequences.

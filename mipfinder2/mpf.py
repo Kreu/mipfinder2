@@ -17,6 +17,7 @@ sys.path.append(parentdir)
 import config
 import blast
 import fasta
+import protein
 
 # Set up logging configuration
 logging.getLogger(__name__)
@@ -58,11 +59,6 @@ def removeTempDirs():
     pass
 
 
-
-
-
-
-
 ###################################################################################
 #   __  __   _____   _____    ______   _____   _   _   _____    ______   _____    #
 #  |  \/  | |_   _| |  __ \  |  ____| |_   _| | \ | | |  __ \  |  ____| |  __ \   #
@@ -96,21 +92,21 @@ if __name__ == "__main__":
   potential_ancestors = {}
 
   for fasta_header, protein_sequence in all_proteins.items():
-    if isLengthBetween(protein_sequence, 0, conf.maximum_mip_length):
-      uniprot_id = extractUniprotID(fasta_header, 5)
+    if protein.isLengthBetween(protein_sequence, 0, conf.maximum_mip_length):
+      uniprot_id = fasta.extractUniprotID(fasta_header, 5)
       if uniprot_id:
         potential_mips[uniprot_id] = protein_sequence
 
-    if isLengthBetween(protein_sequence, conf.minimum_ancestor_length):
-      uniprot_id = extractUniprotID(fasta_header, 5)
+    if protein.isLengthBetween(protein_sequence, conf.minimum_ancestor_length):
+      uniprot_id = fasta.extractUniprotID(fasta_header, 5)
       if uniprot_id:
         potential_ancestors[uniprot_id] = protein_sequence
 
   fasta.createFastaFile(potential_mips, "mip_proteins.fasta")
   fasta.createFastaFile(potential_ancestors, "ancestor_proteins.fasta")
 
-  blast.createBlastDatabase("mip_proteins.fasta", "mip_bdb")
-
+  blast.createBlastDatabase("ancestor_proteins.fasta", "ancestor_db")
+  blast.runBlast("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
 
   print(len(all_proteins))
   print(len(potential_mips))
