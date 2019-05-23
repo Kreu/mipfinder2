@@ -1,8 +1,9 @@
 import unittest
 import os
+
 import sys
 # Hacky way of doing it, for some reason relative imports don't work
-# sys.path.insert(0, "/home/troy/Documents/git/mipfinder2/mipfinder2")
+sys.path.insert(0, "/home/troy/Documents/git/mipfinder2/mipfinder2")
 
 import fasta
 
@@ -25,7 +26,7 @@ class TestextractFastaRecord (unittest.TestCase):
                         ">4": "TEST4"
     }
 
-    self.assertEqual(mpf.extractFastaRecords("test_fasta.txt"), expected_results)
+    self.assertEqual(fasta.extractFastaRecords("test_fasta.txt"), expected_results)
     os.remove("test_fasta.txt")
 
   def test_extra_line_in_beginning(self):
@@ -42,7 +43,7 @@ class TestextractFastaRecord (unittest.TestCase):
                         ">4": "TEST4"
     }
 
-    self.assertEqual(mpf.extractFastaRecords("test_fasta.txt"), expected_results)
+    self.assertEqual(fasta.extractFastaRecords("test_fasta.txt"), expected_results)
     os.remove("test_fasta.txt")
 
   def test_extra_line_in_end(self):
@@ -59,7 +60,7 @@ class TestextractFastaRecord (unittest.TestCase):
                         ">4": "TEST4"
     }
 
-    self.assertEqual(mpf.extractFastaRecords("test_fasta.txt"), expected_results)
+    self.assertEqual(fasta.extractFastaRecords("test_fasta.txt"), expected_results)
     os.remove("test_fasta.txt")
 
 
@@ -71,13 +72,13 @@ class TestgetProteinExistenceLevel (unittest.TestCase):
     self.no_protein_level = ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 SV=4"
 
   def test_level_one(self):
-    self.assertEqual(mpf.getProteinExistenceLevel(self.level_one), 1)
+    self.assertEqual(fasta.getProteinExistenceLevel(self.level_one), 1)
 
   def test_level_five(self):
-    self.assertEqual(mpf.getProteinExistenceLevel(self.level_five), 5) 
+    self.assertEqual(fasta.getProteinExistenceLevel(self.level_five), 5) 
 
   def test_no_level(self):
-    self.assertEqual(mpf.getProteinExistenceLevel(self.no_protein_level), -1)
+    self.assertEqual(fasta.getProteinExistenceLevel(self.no_protein_level), -1)
 
 
 class TestextractUniprotID (unittest.TestCase):
@@ -87,4 +88,4 @@ class TestextractUniprotID (unittest.TestCase):
     self.expected_output = "Q9C5U0"
 
   def test_uniprot_kb_header(self):
-    self.assertEqual(mpf.extractUniprotID(self.fasta_header, 3), self.expected_output)
+    self.assertEqual(fasta.extractUniprotID(self.fasta_header, 3), self.expected_output)

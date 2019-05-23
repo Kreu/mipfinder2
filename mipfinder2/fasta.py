@@ -1,5 +1,8 @@
+import typing
+import logging
+
 # TODO: Write unit tests for this
-def createFastaFile(sequences: dict, output: str):
+def createFile(sequences: dict, output: str):
   """Creates a FASTA file from the supplied protein IDs and sequences.
 
   Args:
@@ -10,7 +13,7 @@ def createFastaFile(sequences: dict, output: str):
   """
   logging.info(f"Writing {output}.fasta")
   with open(output, 'w') as f:
-    file_contents = []
+    file_contents: list  = []
     for protein_id, protein_sequence in sequences.items():
       f.write(f">{protein_id}\n{protein_sequence}\n")
   logging.info(f"Finished writing {output}.fasta")
@@ -28,14 +31,14 @@ def extractFastaRecords(fasta_file: str) -> typing.Dict[str, str]:
   """
 
   with open(fasta_file, 'r') as f:
-    fasta_identifier = ""
-    fasta_sequence = ""
-    fasta_records = {}
-    fasta_record_found = False
+    fasta_identifier: str = ""
+    fasta_sequence: str = ""
+    fasta_records: dict = {}
+    fasta_record_found: bool = False
 
     for line in f:
       #Strip newlines because they interfere with processing
-      line = line.strip('\n')
+      line: str = line.strip('\n')
       
       # A FASTA format contains a line always starting with '>' character. This line contains 
       # information about the sequence such as its ID, source organism, gene code or the like
@@ -75,8 +78,8 @@ def getProteinExistenceLevel(fasta_header: str) -> int:
 
   """
   # PE level is always a single digit number, we can just access the character after `PE=` substring.
-  pe_position = fasta_header.find("PE=")
-  pe_level = -1
+  pe_position: int  = fasta_header.find("PE=")
+  pe_level: int = -1
   if pe_position != -1: #If string is not found, find() returns -1
     pe_level = fasta_header[pe_position + 3] #It's `3` because in `PE=x` x denotes the PE level integer
     return int(pe_level)
@@ -138,6 +141,6 @@ def extractUniprotID(fasta_header: str, protein_existence_cutoff: int) -> str:
 
   # Split the FASTA header by `|`, this results in a list where the UniProt ID is in the
   # second column, unless the header is malformed.
-  split_header = fasta_header.split('|')
-  uniprot_id = split_header[1]
+  split_header: str = fasta_header.split('|')
+  uniprot_id: str = split_header[1]
   return uniprot_id
