@@ -18,7 +18,7 @@ def createFile(sequences: dict, output: str):
       f.write(f">{protein_id}\n{protein_sequence}\n")
   logging.info(f"Finished writing {output}.fasta")
 
-def extractFastaRecords(fasta_file: str) -> typing.Dict[str, str]:
+def extractRecords(fasta_file: str) -> typing.Dict[str, str]:
   """Extracts all FASTA records from a file into individual entries.
 
   Args:

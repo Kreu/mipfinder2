@@ -3,16 +3,12 @@ import os
 
 import sys
 # Hacky way of doing it, for some reason relative imports don't work
-<<<<<<< HEAD
 sys.path.insert(0, "/home/troy/Documents/git/mipfinder2/mipfinder2")
-=======
-# sys.path.insert(0, "/media/troy/Data/Valdeko/documents/git/mipfinder2/mipfinder2")
->>>>>>> cf841dd97350ae61f6f9aca85eb462bcdfaa8ca7
 
 import fasta
 
 
-class TestextractFastaRecord (unittest.TestCase):
+class Test_extractRecords (unittest.TestCase):
 
   def setUp(self):
     pass
@@ -68,7 +64,7 @@ class TestextractFastaRecord (unittest.TestCase):
     os.remove("test_fasta.txt")
 
 
-class TestgetProteinExistenceLevel (unittest.TestCase):
+class Test_getProteinExistenceLevel (unittest.TestCase):
 
   def setUp(self):
     self.level_one= ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=1 SV=1"
@@ -85,7 +81,7 @@ class TestgetProteinExistenceLevel (unittest.TestCase):
     self.assertEqual(fasta.getProteinExistenceLevel(self.no_protein_level), -1)
 
 
-class TestextractUniprotID (unittest.TestCase):
+class Test_extractUniprotID (unittest.TestCase):
 
   def setUp(self):
     self.fasta_header = ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=1 SV=1"
