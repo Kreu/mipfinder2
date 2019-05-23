@@ -25,11 +25,10 @@ def extractRecords(fasta_file: str) -> typing.Dict[str, str]:
     fasta_file (str): Path to a file containing all the proteins of the target
                       organism in FASTA format.
   Returns:
-    Dictionary containing protein FASTA identifier as the key and protein sequence
+    Dictionary containing protein FASTA header as the key and protein sequence
     as the value.
 
   """
-
   with open(fasta_file, 'r') as f:
     fasta_identifier: str = ""
     fasta_sequence: str = ""
@@ -56,6 +55,7 @@ def extractRecords(fasta_file: str) -> typing.Dict[str, str]:
       elif line.startswith('>') and fasta_record_found:
         fasta_records[fasta_identifier] = fasta_sequence
         
+        # Reset the variables for the next entry
         fasta_sequence = ""
         fasta_identifier = line
         continue
@@ -66,7 +66,7 @@ def extractRecords(fasta_file: str) -> typing.Dict[str, str]:
 
     # Finally, if we hit the last line of the file, we need to write the last entry.
     fasta_records[fasta_identifier] = fasta_sequence
-
+    logging.info(f"Extracted {len(fasta_records)} records from {fasta_file}.")
     return fasta_records
 
 def getProteinExistenceLevel(fasta_header: str) -> int:

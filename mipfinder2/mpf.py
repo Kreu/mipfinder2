@@ -7,18 +7,18 @@ import datetime
 import pathlib
 import shutil
 import typing
-
 import os
 import sys
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
 
 import config
 import blast
 import fasta
 import protein
 import interpro
+import string_db
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(currentdir))
 
 # Set up logging configuration
 logging.getLogger(__name__)
@@ -57,13 +57,13 @@ def removeDir(dir_name: str):
 #  | |\/| |   | |   |  ___/  |  __|     Sølvgade  |   | . ` | | |  | | |  __|   |  _  /   #
 #  | |  | |  _| |_  | |      | |       _Sølvgade  |_  | |\  | | |__| | | |____  | | \ \   #
 #  |_|  |_| |_____| |_|      |_|      |_Sølvgade ___| |_| \_| |_____/  |______| |_|  \_\  #
-#                                                                                 #
-#                                 ___         ___                                 #
-#                                |__ \       / _ \                                #
-#                        __   __    ) |     | | | |                               #
-#                        \ \ / /   / /      | | | |                               #
-#                         \ V /   / /_   _  | |_| |                               #
-#                          \_/   |____| (_)  \___/                                #
+#                                            protein                                     #
+#                                 ___        protein ___                                 #
+#                                |__ \       protein/ _ \                                #
+#                        __   __    ) |     |protein | | |                               #
+#                        \ \ / /   / /      |protein | | |                               #
+#                         \ V /   / /_   _  |protein |_| |                               #
+#                          \_/   |____| (_)  protein\___/                                #
 #                                                                                 #
 ###################################################################################
 
@@ -82,11 +82,22 @@ if __name__ == "__main__":
   conf = config.Config('config.ini')
 
   # Create directories to hold files for data processing
+  createDir('blast')
 
 
   # Main part
   logging.info(f"Extracting all protein IDs and sequences from {conf.organism_protein_list}...")
   organism_protein_list = fasta.extractRecords(conf.organism_protein_list)
+
+  logging.info(f"Extracting all known microproteins from {conf.known_mips}")
+  known_mips = fasta.extractRecords(conf.known_mips)
+
+  # Process STRING database
+  string_db.extractRecords(conf.string_database)
+
+  potential_mips: dict = protein.filterBySize(organism_protein_list, 1, 150)
+  potential_ancestors: dict = protein.filterBySize(organism_protein_list, 240)
+  potential_intermediaries: dict = protein.filterBySize(organism_protein_list, 151, 239)
 
   # Extract th
 
@@ -95,27 +106,15 @@ if __name__ == "__main__":
   potential_mips = {}
   potential_ancestors = {}
 
-  # for fasta_header, protein_sequence in all_proteins.items():
-  #   if protein.isLengthBetween(protein_sequence, 0, conf.maximum_mip_length):
-  #     uniprot_id = fasta.extractUniprotID(fasta_header, 6)
-  #     if uniprot_id:
-  #       potential_mips[uniprot_id] = protein_sequence
-
-  #   if protein.isLengthBetween(protein_sequence, conf.minimum_ancestor_length):
-  #     uniprot_id = fasta.extractUniprotID(fasta_header, 6)
-  #     if uniprot_id:
-  #       potential_ancestors[uniprot_id] = protein_sequence
 
   # fasta.createFile(potential_mips, "mip_proteins.fasta")
   # fasta.createFile(potential_ancestors, "ancestor_proteins.fasta")
 
   # blast.createDatabase("ancestor_proteins.fasta", "ancestor_db")
-  blast.run("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
+  # blast.run("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
 
   # interpro.processTSV()
-  print(len(organism_protein_list))
-  print(len(potential_mips))
-  print(len(potential_ancestors))
+
   # print(potential_ancestors)
 
   # Wrap up
