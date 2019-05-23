@@ -104,8 +104,8 @@ if __name__ == "__main__":
   # fasta.createFile(potential_mips, "mip_proteins.fasta")
   # fasta.createFile(potential_ancestors, "ancestor_proteins.fasta")
 
-  # blast.createBlastDatabase("ancestor_proteins.fasta", "ancestor_db")
-  blast.runBlast("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
+  # blast.createDatabase("ancestor_proteins.fasta", "ancestor_db")
+  blast.run("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
 
   interpro.processTSV()
   print(len(all_proteins))

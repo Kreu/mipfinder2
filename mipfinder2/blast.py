@@ -1,7 +1,7 @@
 import subprocess
 import logging
 
-def createBlastDatabase(sequence_file: str, output: str):
+def createDatabase(sequence_file: str, output: str):
   """Creates a BLAST database from a FASTA file.
 
   Creating a BLAST database file greatly speeds up searches with blast.
@@ -18,7 +18,7 @@ def createBlastDatabase(sequence_file: str, output: str):
   logging.info(f"Running the command: {make_db_command}")
   subprocess.run(make_db_command.split(' '))
 
-def runBlast(blast_commmand: str):
+def run(blast_commmand: str):
   """Runs BLAST using the command specified.
   
   Args:
