@@ -40,18 +40,19 @@ def getKnownMicroproteins(microprotein_list: str) -> typing.List[str]:
       known_microproteins.append(line.strip('\n'))
   return known_microproteins 
 
-def createTempDirs():
-  """Creates temporary directories to hold processing files."""
-  pathlib.Path('temp').mkdir(parents = True, exist_ok = True)
-  pathlib.Path('temp/blast').mkdir(parents=True, exist_ok = True)
-  pathlib.Path('temp/clustalo').mkdir(parents=True, exist_ok = True)
-  pathlib.Path('temp/hmmer').mkdir(parents=True, exist_ok = True)
-  pathlib.Path('temp/aligment').mkdir(parents=True, exist_ok = True)
-
-def removeTempDirs():
-  """Removes temporary directories that hold processing files.
+def createDir(dir_name: str):
+  """Creates a directory in the current folder.
   
-  If temporary directories do not exist, the function does nothing
+  If the parent directories in the path are missing, they are created. If the directory exists,
+  it will be recreated. 
+  
+  """
+  pathlib.Path(dir_name).mkdir(parents = True, exist_ok = True)
+
+def removeDir(dir_name: str):
+  """Removes a directory from the current folder.
+  
+  If the directory does not exist, the function does nothing.
   
   """
   try:
@@ -77,14 +78,29 @@ def removeTempDirs():
 #                                                                                 #
 ###################################################################################
 
+"""
+mipfinder v2.0
+
+This script looks for microproteins within genomes. Microproteins are small regulatory
+proteins which are thought to derive from ancestral genes.
+
+"""
 if __name__ == "__main__":
+  # Setup
   logging.info("Starting MIPFINDER v2.0")
   logging.debug(f"Working directory is {os.getcwd()}")
   start_time = datetime.datetime.now() 
-
   conf = config.Config('config.ini')
 
-  all_proteins = fasta.extractRecords(conf.organism_protein_list)
+  # Create directories to hold files for data processing
+
+
+  # Main part
+  logging.info(f"Extracting all protein IDs and sequences from {conf.organism_protein_list}...")
+  organism_protein_list = fasta.extractRecords(conf.organism_protein_list)
+
+  # Extract th
+
   # Create two groups of proteins, one with those of sequence length shorter than that of 
   # conf.maximum_mip_length and the other with sequence longer than the conf.minimum_ancestor_length
   potential_mips = {}
@@ -107,12 +123,16 @@ if __name__ == "__main__":
   # blast.createDatabase("ancestor_proteins.fasta", "ancestor_db")
   blast.run("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
 
-  interpro.processTSV()
-  print(len(all_proteins))
+  # interpro.processTSV()
+  print(len(organism_protein_list))
   print(len(potential_mips))
   print(len(potential_ancestors))
   # print(potential_ancestors)
-  logging.info("Done.")
+
+  # Wrap up
+  end_time = datetime.datetime.now()
+  time_elapsed = end_time - start_time
+  logging.info(f"Finished processing all the files in {time_elapsed} seconds.")
 
 
 
