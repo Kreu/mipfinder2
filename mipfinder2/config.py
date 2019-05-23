@@ -27,7 +27,7 @@ class Config:
     config.read(self.config_file)
     
     # DATA configuration section
-    self.organism_protein_fasta : str = config['DATA']['organism_protein_fasta']
+    self.organism_protein_list : str = config['DATA']['organism_protein_list']
 
     # STRING configuration section
     self.string_database: str = config['STRING']['string_database']
@@ -42,7 +42,7 @@ class Config:
     #   REQUIRED VARIABLES   #
     ##########################
 
-    _fileExists(self.organism_protein_fasta)
+    _fileExists(self.organism_protein_list)
     _fileExists(self.string_database)
     _fileExists(self.string_protein_info)
     logging.info("All required dependencies detected.") 
