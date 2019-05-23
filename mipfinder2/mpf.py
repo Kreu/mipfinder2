@@ -82,31 +82,29 @@ if __name__ == "__main__":
   logging.debug(f"Working directory is {os.getcwd()}")
   start_time = datetime.datetime.now() 
 
-  # TODO: Maybe rewrite using ConfigArgParser module rather than configuration file? Would allow to 
-  # quickly override paramteres from the command line. Howveer it is not currently important.
-  conf = config.Config('config_new.ini')
+  conf = config.Config('config.ini')
 
-  all_proteins = fasta.extractFastaRecords(conf.organism_protein_list)
+  all_proteins = fasta.extractRecords(conf.organism_protein_list)
   # Create two groups of proteins, one with those of sequence length shorter than that of 
   # conf.maximum_mip_length and the other with sequence longer than the conf.minimum_ancestor_length
   potential_mips = {}
   potential_ancestors = {}
 
-  for fasta_header, protein_sequence in all_proteins.items():
-    if protein.isLengthBetween(protein_sequence, 0, conf.maximum_mip_length):
-      uniprot_id = fasta.extractUniprotID(fasta_header, 6)
-      if uniprot_id:
-        potential_mips[uniprot_id] = protein_sequence
+  # for fasta_header, protein_sequence in all_proteins.items():
+  #   if protein.isLengthBetween(protein_sequence, 0, conf.maximum_mip_length):
+  #     uniprot_id = fasta.extractUniprotID(fasta_header, 6)
+  #     if uniprot_id:
+  #       potential_mips[uniprot_id] = protein_sequence
 
-    if protein.isLengthBetween(protein_sequence, conf.minimum_ancestor_length):
-      uniprot_id = fasta.extractUniprotID(fasta_header, 6)
-      if uniprot_id:
-        potential_ancestors[uniprot_id] = protein_sequence
+  #   if protein.isLengthBetween(protein_sequence, conf.minimum_ancestor_length):
+  #     uniprot_id = fasta.extractUniprotID(fasta_header, 6)
+  #     if uniprot_id:
+  #       potential_ancestors[uniprot_id] = protein_sequence
 
-  fasta.createFile(potential_mips, "mip_proteins.fasta")
-  fasta.createFile(potential_ancestors, "ancestor_proteins.fasta")
+  # fasta.createFile(potential_mips, "mip_proteins.fasta")
+  # fasta.createFile(potential_ancestors, "ancestor_proteins.fasta")
 
-  blast.createBlastDatabase("ancestor_proteins.fasta", "ancestor_db")
+  # blast.createBlastDatabase("ancestor_proteins.fasta", "ancestor_db")
   blast.runBlast("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
 
   interpro.processTSV()
