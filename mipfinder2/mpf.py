@@ -29,17 +29,6 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt = "%Y-%m-%d %H:%M:%S")
                 #     format='%(asctime)s %(module)s %(name)s.%(funcName)s %(levelname)-8s %(message)s')
 
-def getKnownMicroproteins(microprotein_list: str) -> typing.List[str]:
-  """Extracts known microprotein IDs from a file into a list.
-  
-  Returns:
-    A list containing all microprotein UniProt IDs""" 
-  known_microproteins = []
-  with open(microprotein_list, 'r+') as f:
-    for line in f:
-      known_microproteins.append(line.strip('\n'))
-  return known_microproteins 
-
 def createDir(dir_name: str):
   """Creates a directory in the current folder.
   
