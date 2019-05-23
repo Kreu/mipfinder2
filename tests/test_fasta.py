@@ -3,7 +3,11 @@ import os
 
 import sys
 # Hacky way of doing it, for some reason relative imports don't work
+<<<<<<< HEAD
 sys.path.insert(0, "/home/troy/Documents/git/mipfinder2/mipfinder2")
+=======
+# sys.path.insert(0, "/media/troy/Data/Valdeko/documents/git/mipfinder2/mipfinder2")
+>>>>>>> cf841dd97350ae61f6f9aca85eb462bcdfaa8ca7
 
 import fasta
 

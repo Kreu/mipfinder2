@@ -18,7 +18,10 @@ import config
 import blast
 import fasta
 import protein
+<<<<<<< HEAD
 import interpro
+=======
+>>>>>>> cf841dd97350ae61f6f9aca85eb462bcdfaa8ca7
 
 # Set up logging configuration
 logging.getLogger(__name__)
@@ -60,6 +63,7 @@ def removeTempDirs():
     pass
 
 
+<<<<<<< HEAD
 ########################################Sølvgade ##########################################
 #   __  __   _____   _____    ______   _Sølvgade ___   _   _   _____    ______   _____    #
 #  |  \/  | |_   _| |  __ \  |  ____| |_Sølvgade   _| | \ | | |  __ \  |  ____| |  __ \   #
@@ -67,6 +71,15 @@ def removeTempDirs():
 #  | |\/| |   | |   |  ___/  |  __|     Sølvgade  |   | . ` | | |  | | |  __|   |  _  /   #
 #  | |  | |  _| |_  | |      | |       _Sølvgade  |_  | |\  | | |__| | | |____  | | \ \   #
 #  |_|  |_| |_____| |_|      |_|      |_Sølvgade ___| |_| \_| |_____/  |______| |_|  \_\  #
+=======
+###################################################################################
+#   __  __   _____   _____    ______   _____   _   _   _____    ______   _____    #
+#  |  \/  | |_   _| |  __ \  |  ____| |_   _| | \ | | |  __ \  |  ____| |  __ \   #
+#  | \  / |   | |   | |__) | | |__      | |   |  \| | | |  | | | |__    | |__) |  #
+#  | |\/| |   | |   |  ___/  |  __|     | |   | . ` | | |  | | |  __|   |  _  /   #
+#  | |  | |  _| |_  | |      | |       _| |_  | |\  | | |__| | | |____  | | \ \   #
+#  |_|  |_| |_____| |_|      |_|      |_____| |_| \_| |_____/  |______| |_|  \_\  #
+>>>>>>> cf841dd97350ae61f6f9aca85eb462bcdfaa8ca7
 #                                                                                 #
 #                                 ___         ___                                 #
 #                                |__ \       / _ \                                #
@@ -94,17 +107,30 @@ if __name__ == "__main__":
 
   for fasta_header, protein_sequence in all_proteins.items():
     if protein.isLengthBetween(protein_sequence, 0, conf.maximum_mip_length):
+<<<<<<< HEAD
       uniprot_id = fasta.extractUniprotID(fasta_header, 6)
+=======
+      uniprot_id = fasta.extractUniprotID(fasta_header, 5)
+>>>>>>> cf841dd97350ae61f6f9aca85eb462bcdfaa8ca7
       if uniprot_id:
         potential_mips[uniprot_id] = protein_sequence
 
     if protein.isLengthBetween(protein_sequence, conf.minimum_ancestor_length):
+<<<<<<< HEAD
       uniprot_id = fasta.extractUniprotID(fasta_header, 6)
       if uniprot_id:
         potential_ancestors[uniprot_id] = protein_sequence
 
   fasta.createFile(potential_mips, "mip_proteins.fasta")
   fasta.createFile(potential_ancestors, "ancestor_proteins.fasta")
+=======
+      uniprot_id = fasta.extractUniprotID(fasta_header, 5)
+      if uniprot_id:
+        potential_ancestors[uniprot_id] = protein_sequence
+
+  fasta.createFastaFile(potential_mips, "mip_proteins.fasta")
+  fasta.createFastaFile(potential_ancestors, "ancestor_proteins.fasta")
+>>>>>>> cf841dd97350ae61f6f9aca85eb462bcdfaa8ca7
 
   blast.createBlastDatabase("ancestor_proteins.fasta", "ancestor_db")
   blast.runBlast("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
