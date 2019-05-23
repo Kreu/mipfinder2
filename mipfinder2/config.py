@@ -27,7 +27,8 @@ class Config:
     config.read(self.config_file)
     
     # DATA configuration section
-    self.organism_protein_list : str = config['DATA']['organism_protein_list']
+    self.organism_protein_list: str = config['DATA']['organism_protein_list']
+    self.known_mips: str = config['DATA']['known_mips']
 
     # STRING configuration section
     self.string_database: str = config['STRING']['string_database']
