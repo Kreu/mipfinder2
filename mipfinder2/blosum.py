@@ -1,3 +1,4 @@
+import typing
 import math
 
 # Gap penalty is -4, gap extension penalty is 1
@@ -25,47 +26,48 @@ BLOSUM62 = {
 '-':{'C':-4,'S':-4, 'T':-4, 'P':-4, 'A':-4, 'G':-4, 'N':-4, 'D':-4, 'E':-4, 'Q':-4, 'H':-4, 'R':-4, 'K':-4, 'M':-4, 'I':-4, 'L':-4, 'V':-4, 'F':-4,  'Y':-4,  'W':-4, '-':1}
 }
 
-def calculateBLOSUM(seq1, seq2, matrix=BLOSUM62, probability=False) -> float:
-    """Calculates the BLOSUM score of aligned sequences.
+def calculateBLOSUM(seq1: str, seq2: str, matrix: typing.Dict[Dict[str, int]] =BLOSUM62, probability: bool =False) -> float:
+  """Calculates the BLOSUM score of aligned sequences.
 
-    By default it uses the BLOSUM62 matrix where the gap penalty used is -4 and
-    the gap extension penalty is 1.
+  By default it uses the BLOSUM62 matrix where the gap penalty used is -4 and
+  the gap extension penalty is 1.
 
-    Parameters:
-        seq1 (str): First sequence to be used in calculation. This must be the same length as seq2.
-        seq2 (str): Second sequence to be used in calculation. This must be the same length as seq1.
-        matrix: Specifies which BLOSUM matrix to use. By default it is BLOSUM62.
-        log2: Specifies whether the score returned is BLOSUM score or the
-                probability of seeing this alignment over random alignment.
-                False by default. 
+  Parameters:
+    seq1 (str): First sequence to be used in calculation. This must be the same length as seq2.
+    seq2 (str): Second sequence to be used in calculation. This must be the same length as seq1.
+    matrix: Specifies which BLOSUM matrix to use. By default it is BLOSUM62.
+    log2: Specifies whether the score returned is BLOSUM score or the
+          probability of seeing this alignment over random alignment.
+          False by default. 
 
-    Raises:
-        ValueError: If the sequence lenghts do not match.
-    Returns:
-        BLOSUM score for the two sequences being compared if probability=False,
-        else if probability=True returns the probability of observing this alignment
-        over random alignment.
+  Raises:
+    ValueError: If the sequence lenghts do not match.
 
-    """
+  Returns:
+    BLOSUM score for the two sequences being compared if probability=False,
+    else if probability=True returns the probability of observing this alignment
+    over random alignment.
 
-    # Sequences have to be the same length!
-    if len(seq1) != len(seq2):
-        raise ValueError("Sequences are not the same length!") 
+  """
 
-    # Sequences have to be uppercase because the BLOSUM matrix dictionary keys are all in
-    # uppercase.
-    seq1 = seq1.upper()
-    seq2 = seq2.upper()
-    
-    blosum_score = 0
-    position = 0
-    while(position < len(seq1)):
-        i = seq1[position]
-        j = seq2[position]
-        blosum_score += BLOSUM62[i][j] #BLOSUM62 is a dict of dicts
-        position += 1
+  # Sequences have to be the same length!
+  if len(seq1) != len(seq2):
+    raise ValueError("Sequences are not the same length!") 
 
-    if probability:
-        return(float(math.sqrt(2**blosum_score)))
-    else:
-        return float(blosum_score)
+  # Sequences have to be uppercase because the BLOSUM matrix dictionary keys are all in
+  # uppercase.
+  seq1 = seq1.upper()
+  seq2 = seq2.upper()
+  
+  blosum_score: int = 0
+  position: int = 0
+  while(position < len(seq1)):
+    i = seq1[position]
+    j = seq2[position]
+    blosum_score += BLOSUM62[i][j] #BLOSUM62 is a dict of dicts
+    position += 1
+
+  if probability:
+    return(float(math.sqrt(2**blosum_score)))
+  else:
+    return float(blosum_score)

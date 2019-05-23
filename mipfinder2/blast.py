@@ -14,15 +14,15 @@ def createDatabase(sequence_file: str, output: str):
   """
 
   logging.info(f"Creating a BLAST database.")
-  make_db_command = f"makeblastdb -in {sequence_file} -out {output} -dbtype prot"
+  make_db_command: str = f"makeblastdb -in {sequence_file} -out {output} -dbtype prot"
   logging.info(f"Running the command: {make_db_command}")
   subprocess.run(make_db_command.split(' '))
 
 def run(blast_commmand: str):
   """Runs BLAST using the command specified.
-  
+
   Args:
     blast_command (str): Terminal command to run. Has to specify blastp/blasn/etc.
-  
+
   """
   subprocess.run(blast_commmand.split(' '))

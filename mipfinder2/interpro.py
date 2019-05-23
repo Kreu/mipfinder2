@@ -45,7 +45,7 @@ def processTSV(filename: str) -> typing.Dict[str, typing.Set[str]]:
 
   """
 
-  results = {}
+  results: dict = {}
   with open(filename, 'r') as f:
     for line in f:
       individual_entries: list = line.split('\t')

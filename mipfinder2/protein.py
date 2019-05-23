@@ -1,4 +1,4 @@
-def isLengthBetween(sequence, min_length: int=0, max_length: float=float('inf')) -> bool:
+def isLengthBetween(sequence: str, min_length: int=0, max_length: float=float('inf')) -> bool:
   """Checks whether the sequence length is between specified numbers.
 
   The sequence bound are checked as [min_length, max_length].
