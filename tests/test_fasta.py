@@ -26,7 +26,7 @@ class Test_extractRecords (unittest.TestCase):
                         ">4": "TEST4"
     }
 
-    self.assertEqual(fasta.extractFastaRecords("test_fasta.txt"), expected_results)
+    self.assertEqual(fasta.extractRecords("test_fasta.txt"), expected_results)
     os.remove("test_fasta.txt")
 
   def test_extra_line_in_beginning(self):
@@ -43,7 +43,7 @@ class Test_extractRecords (unittest.TestCase):
                         ">4": "TEST4"
     }
 
-    self.assertEqual(fasta.extractFastaRecords("test_fasta.txt"), expected_results)
+    self.assertEqual(fasta.extractRecords("test_fasta.txt"), expected_results)
     os.remove("test_fasta.txt")
 
   def test_extra_line_in_end(self):
@@ -60,7 +60,7 @@ class Test_extractRecords (unittest.TestCase):
                         ">4": "TEST4"
     }
 
-    self.assertEqual(fasta.extractFastaRecords("test_fasta.txt"), expected_results)
+    self.assertEqual(fasta.extractRecords("test_fasta.txt"), expected_results)
     os.remove("test_fasta.txt")
 
 
