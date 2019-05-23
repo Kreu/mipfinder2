@@ -114,6 +114,7 @@ if __name__ == "__main__":
   print(len(potential_mips))
   print(len(potential_ancestors))
   # print(potential_ancestors)
+  logging.info("Done.")
 
 
 
