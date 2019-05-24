@@ -103,3 +103,19 @@ venv.bak/
 # mypy
 .mypy_cache/
 .vscode/launch.json
+docs/source/config.rst
+docs/source/interpro.rst
+docs/source/index.rst
+docs/source/fasta.rst
+docs/source/mpf.rst
+docs/source/protein.rst
+docs/source/modules.rst
+docs/source/conf.py
+docs/source/blosum.rst
+docs/source/blast.rst
+.vscode/settings.json
+conf.py
+docs/make.bat
+docs/Makefile
+docs/source/string_db.rst
+mipfinder2/dev_branch.code-workspace

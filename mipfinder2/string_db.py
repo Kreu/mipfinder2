@@ -1,6 +1,7 @@
 import typing
+import logging
 
-def stringToUniProt(string_protein_info: str):
+def stringToUniprot(string_protein_info: str):
   """Match STRING IDs to UniProt IDs.
 
   This uses an organism-specific file from STRING database from here:
@@ -35,6 +36,7 @@ def stringToUniProt(string_protein_info: str):
       # Might break if the format changes though.
       if (line_count >= 712094) and (line_count <= 765105):
         tokens = line.split('\t')
+        print(tokens)
 
         # All STRING aliases in an organism database are suffixed with the
         # NCBI taxonomic identifier in the following format:
@@ -69,8 +71,8 @@ def writeProteinAliases(aliases: dict, output: str):
       x.write(f"{string_alias}\t{uniprot_alias}\n")
 
 
-def extractLinks(string_database: str, delimiter: str='\t') -> typing.Dict[str, typing.List[str]]:
-  """Extracts protein-protein interaction information from STRING database
+def extractLinks(string_database: str, score_cutoff: int=700, delimiter: str='\t', format="UNIPROT") -> typing.Dict[str, typing.List[str]]:
+  """Extracts protein-protein interaction information from STRING database.
 
   An example of STRING database format is below:
   protein1 protein2 neighborhood fusion cooccurence coexpression experimental database textmining combined_score
@@ -78,40 +80,55 @@ def extractLinks(string_database: str, delimiter: str='\t') -> typing.Dict[str, 
   3702.AT1G01010.1 3702.AT1G06149.1 0 0 0 0 0 0 865 86
 
   The score in the database is the same as on the STRING website but multiplied by a 1000, e.g. a
-  score of 0.954 on the STRING website is 954 in the database file. 
+  score of 0.954 on the STRING website is 954 in the database file. The scores range from 0 to 1000. 
+  The score indicates the likelihood of an interaction, e.g. a score of 500 means that every second 
+  interaction is possibly erroneous.
 
   Args:
-    string_database: File containing protein-protein interaction network data for a specific
-                      organism. This can be downloaded from http://www.string-db.org
-    delimiter: Character by which to split values into separate tokens.
+    string_database (str): File containing protein-protein interaction network data for a specific
+        organism. This can be downloaded from http://www.string-db.org.
+    score_cutoff (int): Exclude all protein-protein interactions with a reported value of lower than cutoff.
+    delimiter (str): Character by which to split values into separate tokens.
+    format (str): Output format of protein IDs. Defauls to `UNIPROT`.
+        Other possible format is `STRING`
 
-    Returns:
-      A dictionary containing STRING IDs as as keys and values. Which STRING ID is chosen as the
-      key and which is chosen as value is arbitrary. Interactions are duplicated, i.e. if
-      protein 1 interacts with protein 2, it is representd as a {"1": "2"} and as {"2": "1"} key-value
-      pairs.
+  Returns:
+    A dictionary containing STRING IDs as as keys and a list of STRING IDs as values. 
+    Interactions are duplicated, i.e. if protein 1 interacts with protein 2 and protein 3;
+    and protein 2 interacts with protein 1 but not 3, it is
+    represented as a {"1": ["2", "3"]} and as {"2": ["1"]} key-value pairs.
+
   """
 
   logging.info(f"Extracting STRING protein links from {string_database}.")
-  protein_links = {}
+  protein_links: dict = {}
   with open(string_database, 'r') as f:
+    next(f) # Ignore the header
     for line in f:
-      tokens = line.split(delimiter)
+      line = line.strip('\n') # Interferes with processing
+      tokens: list = line.split(delimiter)
+
+      interaction_score: int = int(tokens[9])
+      if interaction_score < score_cutoff:
+        continue
+
       # All STRING aliases in an organism database are suffixed with the
       # NCBI taxonomic identifier in the following format:
       # xxxx.GENE_IDENTIFIER.ISOFORM	Q9FZ30
       # We are only interested in the protein ID so we need to split the 
       # organism identifier.
-      first_protein = tokens[0]
-      second_protein = tokens[1]
+      first_protein: str = tokens[0]
+      second_protein: str = tokens[1]
       #Split xxxx.GENE_IDENTIFIER.ISOFORM into tokens and retain the GENE_IDENTIFIER
       first_protein = (first_protein.split('.'))[1]
       second_protein = (second_protein.split('.'))[1]
 
+      # print(f"{first_protein}, {second_protein}, {interaction_score}")
+
       if first_protein in protein_links:
+        # print(protein_links[first_protein])
         protein_links[first_protein].append(second_protein)
-        # logging.warning(f"{first_protein} is already present in protein")
       else:
-        protein_links[first_protein] = second_protein
-    
+        protein_links[first_protein] = [second_protein]
+        # print(protein_links[first_protein])
   logging.info(f"Extracted {len(protein_links)} protein-protein interactions from {string_database}.") 

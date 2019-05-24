@@ -93,7 +93,7 @@ if __name__ == "__main__":
   known_mips = fasta.extractRecords(conf.known_mips)
 
   # Process STRING database
-  string_db.extractRecords(conf.string_database)
+  string_protein_interactions = string_db.extractLinks(conf.string_database, 700, ' ')
 
   potential_mips: dict = protein.filterBySize(organism_protein_list, 1, 150)
   potential_ancestors: dict = protein.filterBySize(organism_protein_list, 240)

@@ -26,7 +26,7 @@ BLOSUM62 = {
 '-':{'C':-4,'S':-4, 'T':-4, 'P':-4, 'A':-4, 'G':-4, 'N':-4, 'D':-4, 'E':-4, 'Q':-4, 'H':-4, 'R':-4, 'K':-4, 'M':-4, 'I':-4, 'L':-4, 'V':-4, 'F':-4,  'Y':-4,  'W':-4, '-':1}
 }
 
-def calculateBLOSUM(seq1: str, seq2: str, matrix: typing.Dict[Dict[str, int]] =BLOSUM62, probability: bool =False) -> float:
+def calculateScore(seq1: str, seq2: str, matrix: typing.Dict[str, typing.Dict[str, int]]=BLOSUM62, probability: bool =False) -> float:
   """Calculates the BLOSUM score of aligned sequences.
 
   By default it uses the BLOSUM62 matrix where the gap penalty used is -4 and

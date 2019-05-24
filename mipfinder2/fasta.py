@@ -101,28 +101,22 @@ def extractUniprotID(fasta_header: str, protein_existence_cutoff: int) -> str:
   >sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=1 SV=1
 
   A detailed description of the header is found at https://www.uniprot.org/help/fasta-headers, 
-  here is just a copied version from their website
-# class TestcreateFastaFile (unittest.TestCase):
-#   pass
-    db is ‘sp’ for UniProtKB/Swis# class TestcreateFastaFile (unittest.TestCase):
-#   passs-Prot and ‘tr’ for UniProtKB/TrEMBL.
-    UniqueIdentifier is the prima# class TestcreateFastaFile (unittest.TestCase):
-#   passry accession number of the UniProtKB entry.
-    EntryName is the entry name o# class TestcreateFastaFile (unittest.TestCase):
-#   passf the UniProtKB entry.
-    ProteinName is the recommende# class TestcreateFastaFile (unittest.TestCase):
-#   passd name of the UniProtKB entry as annotated in the RecName field. For UniProtKB/TrEMBL entries without a RecName field, the SubName field is used. In case of multiple SubNames, the first one is used. The ‘precursor’ attribute is excluded, ‘Fragment’ is included with the name if applicable.
-    OrganismName is the scientifi# class TestcreateFastaFile (unittest.TestCase):
-#   passc name of the organism of the UniProtKB entry.
-    OrganismIdentifier is the unique identifier of the source organism, assigned by the NCBI.
-    GeneName is the first gene name of the UniProtKB entry. If there is no gene name, OrderedLocusName or ORFname, the GN field is not listed.
-    ProteinExistence is the numerical value describing the evidence for the existence of the protein. (From 1-5)
-      1. Experimental evidence at protein level
-      2. Experimental evidence at transcript level
-      3. Protein inferred from homology
-      4. Protein predicted
-      5. Protein uncertain
-    SequenceVersion is the version number of the sequence.
+  here is just a copied version from their website:
+
+    * db is ‘sp’ for UniProtKB/Swiss-Prot and ‘tr’ for UniProtKB/TrEMBL.
+    * UniqueIdentifier is the primary accession number of the UniProtKB entry.
+    * EntryName is the entry name of the UniProtKB entry.
+    * ProteinName is the recommended name of the UniProtKB entry as annotated in the RecName field. For UniProtKB/TrEMBL entries without a RecName field, the SubName field is used. In case of multiple SubNames, the first one is used. The ‘precursor’ attribute is excluded, ‘Fragment’ is included with the name if applicable.
+    * OrganismName is the scientific name of the organism of the UniProtKB entry.
+    * OrganismIdentifier is the unique identifier of the source organism, assigned by the NCBI.
+    * GeneName is the first gene name of the UniProtKB entry. If there is no gene name, OrderedLocusName or ORFname, the GN field is not listed.
+    * ProteinExistence is the numerical value describing the evidence for the existence of the protein. (From 1-5)
+        1. Experimental evidence at protein level
+        2. Experimental evidence at transcript level
+        3. Protein inferred from homology
+        4. Protein predicted
+        5. Protein uncertain
+    * SequenceVersion is the version number of the sequence.
 
   Args:
     fasta_header (str): String representation of the FASTA header for a protein record
