@@ -130,7 +130,7 @@ def tokenise(string: str, delimiter: str) -> List[str]:
     delimiter: Regular expression containing the delimiters to split the string by. 
 
   Returns:
-    A list of tokens in a string format, split at the specified delimiter(s).
+    A list of tokens as string, split at the specified delimiter(s).
 
   Example:
     Split a string at every comma (,) and hyphen (-):
@@ -141,7 +141,7 @@ def tokenise(string: str, delimiter: str) -> List[str]:
     Split a string at every space and exclamation point:
       >>> string = "This! Is another example!"
       >>> tokenise(string, "[ !]+")
-      ["This", "Is", "another", "exmple"]
+      ["This", "Is", "another", "example"]
 
   """
 
