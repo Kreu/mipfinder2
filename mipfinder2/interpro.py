@@ -61,7 +61,3 @@ def processTSV(filename: str) -> typing.Dict[str, typing.Set[str]]:
         domains.add(domain_accession)
 
   return results
-
-
-  
-

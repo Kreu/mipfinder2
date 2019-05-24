@@ -112,4 +112,3 @@ class Test_tokenise (unittest.TestCase):
   def test_hyphen(self):
     string = "A hyphenated-example."
     self.assertEqual(fasta.tokenise(string, "[\- ]+"), ["A", "hyphenated", "example."])
-    

@@ -20,4 +20,3 @@ class Test_processTSV (unittest.TestCase):
 
   def tearDown(self):
     os.remove("test.tsv")
-
