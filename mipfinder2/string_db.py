@@ -52,6 +52,7 @@ def stringToUniprot(string_protein_info: str):
         # Some of the UniProt IDs have suffixes even though they map to
         # the same STRING database alias, so we filter them out to
         # remove the redundancy.
+        # TODO: Use if '_' in uniprot_alias as it is faster
         if (uniprot_alias.find('_') == -1): # -1 indicates substring not found
             id_map[string_alias] = uniprot_alias
       line_count += 1
