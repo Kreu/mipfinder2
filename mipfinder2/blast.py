@@ -19,14 +19,15 @@ def createDatabase(fasta_file: str, output_file: str):
   logging.info(f"Running the command: {make_db_command}")
   subprocess.run(make_db_command.split(' '))
 
-def run(blast_commmand: str):
-  """Runs BLAST using the command specified.
+def run(commmand: str):
+  """Runs the specified command in the terminal. 
 
   Args:
-    blast_command: Exact terminal command to run.
+    command: Exact terminal command to run.
 
   Example:
-
+    >>> command = "blastp -query query_file.fasta -db database_file -out results.txt"
+    >>> run(command)
   
   """
-  subprocess.run(blast_commmand.split(' '))
+  subprocess.run(commmand.split(' '))
