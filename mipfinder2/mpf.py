@@ -2,38 +2,31 @@
 
 WIP WIP WIP WIP
 """
-import logging
 import datetime
+import logging
+import os
 import pathlib
 import shutil
-import typing
-import os
 import sys
+import typing
 
-import config
 import blast
+import config
 import fasta
-import protein
 import interpro
+import protein
 import string_db
 
-currentdir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.dirname(currentdir))
 
-# Set up logging configuration
-logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG,
-                    filename = 'mipfinder.log',
-                    filemode = 'w',
-                    format='%(asctime)s %(module)s.%(funcName)s %(levelname)-8s %(message)s',
-                    datefmt = "%Y-%m-%d %H:%M:%S")
-                #     format='%(asctime)s %(module)s %(name)s.%(funcName)s %(levelname)-8s %(message)s')
-
+# TODO(Valdeko): Move these into a separate file, they don't really belong here.
 def createDir(dir_name: str):
   """Creates a directory in the current folder.
   
   If the parent directories in the path are missing, they are created. If the directory exists,
   it will be recreated. 
+  
+  Args:
+    dir_name: Name of the directory to be created.
   
   """
   pathlib.Path(dir_name).mkdir(parents = True, exist_ok = True)
@@ -42,7 +35,10 @@ def removeDir(dir_name: str):
   """Removes a directory from the current folder.
   
   If the directory does not exist, the function does nothing.
-  
+ 
+  Args:
+    dir_name: Name of the directory to be created.
+    
   """
   try:
     shutil.rmtree('temp')
@@ -67,15 +63,21 @@ def removeDir(dir_name: str):
 #                                                                                 #
 ###################################################################################
 
-"""
-mipfinder v2.0
+def main():
 
-This script looks for microproteins within genomes. Microproteins are small regulatory
-proteins which are thought to derive from ancestral genes.
-
-"""
-if __name__ == "__main__":
   # Setup
+  currentdir = os.path.dirname(os.path.realpath(__file__))
+  sys.path.append(os.path.dirname(currentdir))
+
+  # Set up logging configuration
+  logging.getLogger(__name__)
+  logging.basicConfig(level=logging.DEBUG,
+                      filename = 'mipfinder.log',
+                      filemode = 'w',
+                      format='%(asctime)s %(module)s.%(funcName)s %(levelname)-8s %(message)s',
+                      datefmt = "%Y-%m-%d %H:%M:%S")
+  # format='%(asctime)s %(module)s %(name)s.%(funcName)s %(levelname)-8s %(message)s')
+    
   logging.info("Starting MIPFINDER v2.0")
   logging.debug(f"Working directory is {os.getcwd()}")
   start_time = datetime.datetime.now() 
@@ -123,4 +125,5 @@ if __name__ == "__main__":
   logging.info(f"Finished processing all the files in {time_elapsed} seconds.")
 
 
-
+if __name__ == "__main__":
+  main()

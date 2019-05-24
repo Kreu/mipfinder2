@@ -1,15 +1,16 @@
-import subprocess
 import logging
+import subprocess
 
-def createDatabase(sequence_file: str, output: str):
+def createDatabase(fasta_file: str, output_file: str):
   """Creates a BLAST database from a FASTA file.
 
-  Creating a BLAST database file greatly speeds up searches with blast.
+  Creating a BLAST database file greatly speeds up blast searches. This is an optional but a
+  highly recommended step.
 
   Args:
-    sequence_file (str): FASTA file containing sequences to be turned into a database
-    output (str): Name for the BLAST database files. Creates three files called `output`.pin,
-                  `output`.psq and `output`.phr
+    fasta_file: FASTA file containing all of the sequences to be turned into a database.
+    output_file: Name for the BLAST database files. Creates three files in the current directory
+        called `output_file`.pin, `output_file`.psq and `output_file`.phr.
 
   """
 

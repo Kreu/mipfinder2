@@ -1,5 +1,6 @@
-import typing
 import math
+from typing import Dict
+
 
 # Gap penalty is -4, gap extension penalty is 1
 BLOSUM62 = {
@@ -26,30 +27,25 @@ BLOSUM62 = {
 '-':{'C':-4,'S':-4, 'T':-4, 'P':-4, 'A':-4, 'G':-4, 'N':-4, 'D':-4, 'E':-4, 'Q':-4, 'H':-4, 'R':-4, 'K':-4, 'M':-4, 'I':-4, 'L':-4, 'V':-4, 'F':-4,  'Y':-4,  'W':-4, '-':1}
 }
 
-def calculateScore(seq1: str, seq2: str, matrix: typing.Dict[str, typing.Dict[str, int]]=BLOSUM62, probability: bool =False) -> float:
-  """Calculates the BLOSUM score of aligned sequences.
-
-  By default it uses the BLOSUM62 matrix where the gap penalty used is -4 and
-  the gap extension penalty is 1.
+def calculateScore(seq1: str, seq2: str, matrix: Dict[str, Dict[str, int]]=BLOSUM62, probability: bool=False) -> float:
+  """Calculates the BLOSUM score of two aligned sequences.
 
   Parameters:
-    seq1 (str): First sequence to be used in calculation. This must be the same length as seq2.
-    seq2 (str): Second sequence to be used in calculation. This must be the same length as seq1.
-    matrix: Specifies which BLOSUM matrix to use. By default it is BLOSUM62.
-    log2: Specifies whether the score returned is BLOSUM score or the
-          probability of seeing this alignment over random alignment.
-          False by default. 
-
-  Raises:
-    ValueError: If the sequence lenghts do not match.
+    seq1: First sequence to be used in calculation. This must be the same length as seq2.
+    seq2: Second sequence to be used in calculation. This must be the same length as seq1.
+    matrix (optional): Specifies which BLOSUM matrix to use. Defaults to BLOSUM62.
+    probability (optional). If False, the function returns the calculated BLOSUM score. If True,
+        the function returns the probability of seeing this alignment over a random alignment.
+        Defaults to False. The probability is calculated as sqrt(2^BLOSUM SCORE).
 
   Returns:
-    BLOSUM score for the two sequences being compared if probability=False,
-    else if probability=True returns the probability of observing this alignment
-    over random alignment.
+    If probability=False, returns a calculated BLOSUM score using the matrix specified.
+    If probability=True, returns the probability of seeing this aligment over a random alignment.    
+
+  Raises:
+    ValueError: If `seq1` and `seq2` are not the same length.
 
   """
-
   # Sequences have to be the same length!
   if len(seq1) != len(seq2):
     raise ValueError("Sequences are not the same length!") 
