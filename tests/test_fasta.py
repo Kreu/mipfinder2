@@ -69,9 +69,20 @@ class Test_extractIdentifier (unittest.TestCase):
     self.header = ">sp|P05783|K1C18_HUMAN Keratin, type I cytoskeletal 18 OS=Homo sapiens OX=9606 GN=KRT18 PE=1 SV=2"
   
   def test_extract_single_identifier(self):
-    assertEqual(fasta.extractIdentifier(header, ["ID"]), ["P05783"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["DB"]), ["sp"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["ID"]), ["P05783"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["EN"]), ["K1C18_HUMAN"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["PN"]), ["Keratin, type I cytoskeletal 18"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["OS"]), ["Homo sapiens"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["OX"]), ["9606"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["GN"]), ["KRT18"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["PE"]), ["1"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["SV"]), ["2"])
 
-
+  def test_multiple_identifiers(self):
+    self.assertEqual(fasta.extractIdentifier(self.header, ["DB", "EN"]), ["sp", "K1C18_HUMAN"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["ID", "SV"]), ["P05783", "2"])
+    self.assertEqual(fasta.extractIdentifier(self.header, ["EN", "ID"]), ["K1C18_HUMAN", "P05783"])
 
 class Test_extractUniprotID (unittest.TestCase):
 

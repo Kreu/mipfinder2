@@ -123,9 +123,12 @@ def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
 
   # There are multiple ways to extract the requested contents, these are just one way of doing it.
   identifier_contents: list = []
+  print(f"Identifiers: {identifiers}")
   for identifier in identifiers:
+
+    # TODO: The first can be simplified by tokenising the header and taking the first, second and third entries
     if identifier == "DB":
-      identifier_contents.append[fasta_header[:2]]  # DB is always the first two characters of the header.
+      identifier_contents.append(fasta_header[1:3])  # DB is always the second and third characters of the header.
       continue  #  As every identifier only corresponds to one if-condition, we can always continue.
 
     if identifier == "ID":
@@ -135,7 +138,7 @@ def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
       continue
     
     if identifier == "EN":
-      tokens: list = tokenise(header, "[| ]+")
+      tokens: list = tokenise(fasta_header, "[| ]+")
       entry_name: str = tokens[2]  # The above tokenise splits >DB|ID|EN PN... into >DB, ID, EN, PN...
       identifier_contents.append(entry_name)
       continue
@@ -145,53 +148,51 @@ def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
       # contents. The best way to do is to find the previous and the following identifiers and 
       # append whatever is between them. Since EN and OS are always required (e.g. not optional),
       # we can use those as our boundaries.
-      tokens: list = tokenise(header, "[| ]+")
+      tokens: list = tokenise(fasta_header, "[| ]+")
       entry_name: str = tokens[2]
 
-      # TODO: Possibly need to adjust indices to not include bordering spaces
-      entry_name_start_pos: int =  fasta_header.rfind(entry_name)  # Use rfind because we want the last position of the match
-      organism_name_start_pos: int = fasta_header.find("ON=")
+      entry_name_start_pos: int = fasta_header.find(entry_name)
+      entry_name_end_pos: int = entry_name_start_pos + len(entry_name)
+      organism_name_start_pos: int = fasta_header.find("OS=")
+      protein_name: str = fasta_header[entry_name_end_pos:organism_name_start_pos]
 
-      protein_name: str = fasta_header[entry_name_start_pos:organism_name_start_pos]
-      identifier_contents.append(protein_name)
+      # Rather than mess with string indices, we can just strip the leading and trailing spaces.
+      identifier_contents.append(protein_name.strip(' '))
       continue
 
     # For the rest of the identifiers we need to find where their identifier is in the string, and
-    # find the next space, which denotes the end of the identifier contents. Since the content sizes
+    # find the next identifier, which denotes the end of the identifier contents. Since the content sizes
     # vary we can't simply use string indices. This could be done with regex but I think it's an 
     # overkill.
-    if identifier == "OS":
-      organism_name_pos: int = fasta_header.rfind("ON=")
-      next_space: int = fasta_header[organism_name_pos:].find(' ')  # Look for the next space starting from the end of ON=
-      organism_name = fasta_header[organism_name_pos:next_space]
-      identifier_contents.append(organism_name)
-      continue
+    # To make this general for all the identifiers, we can just look for the next '=' character
+    # which (should) only exist in the identifiers.
+    # TODO: This may need rewriting to be more clear. Or at least explain logic better in comments 
+    if identifier == "OS" or identifier == "OX" or identifier == "GN" or identifier == "PE":
+      current_identifier_start_pos: int = fasta_header.find(identifier)
+      current_identifier_end_pos: int = current_identifier_start_pos + len(identifier)
+      # Add 1 to the end position because the end position is the '=' and we want to find the NEXT '='
+      next_identifier_pos: int = fasta_header[current_identifier_end_pos + 1:].find('=')
 
-    if identifier == "OX":
-      organism_taxonomy_pos: int = fasta_header.rfind("OX=")
-      next_space: int = fasta_header[organism_taxonomy_pos:].find(' ')  # Look for the next space starting from the end of OX=
-      organism_taxonomy = fasta_header[organism_taxonomy_pos:next_space]
-      identifier_contents.append(organism_taxonomy)
-      continue 
+      # As the identifier are in the format of XX=Y and we look for =, we must subtract 2 to get the
+      # beginning of the next identifier.
+      next_identifier_start: int = current_identifier_end_pos + next_identifier_pos - 2
+      print(next_identifier_start) 
+      print(fasta_header[current_identifier_end_pos + 1:])
 
-    if identifier == "GN":
-      if fasta_header.rfind("GN=") != -1: # GN is an optional parameter and may not be present
-        gene_name_pos: int = fasta_header.rfind("GN=")
-        next_space: int = fasta_header[gene_name_pos:].find(' ')  # Look for the next space starting from the end of GN=
-        gene_name = fasta_header[gene_name_pos:next_space]
-        identifier_contents.append(gene_name)
-      continue
+      print(current_identifier_end_pos + 1)
+      print(next_identifier_start)
+      # Add 1 to the end position because the end position is the '=' and we want to find the NEXT '='
+      current_identifier_contents = fasta_header[current_identifier_end_pos + 1 : next_identifier_start]
       
-    if identifier == "PE":
-      protein_existence_pos: int = fasta_header.rfind("PE=")
-      next_space: int = fasta_header[protein_existence_pos:].find(' ')  # Look for the next space starting from the end of PE=
-      protein_existence = fasta_header[protein_existence_pos:next_space]
-      identifier_contents.append(protein_existence) 
-    #   
+      print(current_identifier_contents)
+      identifier_contents.append(current_identifier_contents)
+      continue
+
     if identifier == "SV":
-       sequence_variant_pos: int = fasta_header.rfind("SV=")
+       sequence_variant_pos: int = fasta_header.find("SV=")
        # Since SV is the last token, append substring from = till the end of the header
-       identifier_contents.append(fasta_header[sequence_variant_pos:]) 
+       identifier_contents.append(fasta_header[sequence_variant_pos + 3:]) # After 3 characters we get the content
+       continue 
 
   return identifier_contents
 
