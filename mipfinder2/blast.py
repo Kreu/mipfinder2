@@ -23,7 +23,10 @@ def run(blast_commmand: str):
   """Runs BLAST using the command specified.
 
   Args:
-    blast_command (str): Terminal command to run. Has to specify blastp/blasn/etc.
+    blast_command: Exact terminal command to run.
 
+  Example:
+
+  
   """
   subprocess.run(blast_commmand.split(' '))
