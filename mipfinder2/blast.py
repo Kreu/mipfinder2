@@ -2,7 +2,7 @@ import logging
 import subprocess
 
 def createDatabase(fasta_file: str, output_file: str):
-  """Creates a BLAST database from a FASTA file.
+  """Creates a BLAST database files from a FASTA file.
 
   Creating a BLAST database file greatly speeds up blast searches. This is an optional but a
   highly recommended step.
