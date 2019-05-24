@@ -68,7 +68,7 @@ def extractRecords(fasta_file: str) -> Dict[str, str]:
     logging.info(f"Extracted {len(fasta_records)} records from {fasta_file}.")
     return fasta_records
 
-def getProteinExistenceLevel(fasta_header: str) -> int:
+def extractProteinExistenceLevel(fasta_header: str) -> int:
   """Extracts ProteinExistence level from a UniProtKB FASTA header.
 
   From https://www.uniprot.org/help/fasta-headers:
@@ -113,7 +113,7 @@ def extractUniprotID(fasta_header: str, protein_existence_cutoff: int) -> str:
     or if ProteinExistence level is equal to or above the threshold, an empty string is returned.
   """
 
-  if getProteinExistenceLevel(fasta_header) >= protein_existence_cutoff:
+  if extractProteinExistenceLevel(fasta_header) >= protein_existence_cutoff:
     return ""
 
   # Split the FASTA header by `|`, this results in a list where the UniProt ID is in the

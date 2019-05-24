@@ -64,7 +64,7 @@ class Test_extractRecords (unittest.TestCase):
     os.remove("test_fasta.txt")
 
 
-class Test_getProteinExistenceLevel (unittest.TestCase):
+class Test_extractProteinExistenceLevel (unittest.TestCase):
 
   def setUp(self):
     self.level_one= ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=1 SV=1"
