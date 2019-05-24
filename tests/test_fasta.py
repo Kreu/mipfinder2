@@ -1,12 +1,12 @@
-import unittest
 import os
-
+import re
 import sys
+import unittest
+
+
 # Hacky way of doing it, for some reason relative imports don't work
 sys.path.insert(0, "/home/troy/Documents/git/mipfinder2/mipfinder2")
-
-import fasta
-
+import fasta  # Has to be after sys.path.insert
 
 class Test_extractRecords (unittest.TestCase):
 
@@ -89,3 +89,27 @@ class Test_extractUniprotID (unittest.TestCase):
 
   def test_uniprot_kb_header(self):
     self.assertEqual(fasta.extractUniprotID(self.fasta_header, 3), self.expected_output)
+
+
+class Test_tokenise (unittest.TestCase):
+
+  def test_delimiters_present(self):
+    string = "This! Is another example!"
+    self.assertEqual(fasta.tokenise(string, "[! ]+"), ["This", "Is", "another", "example"])
+
+  def test_no_delimiters_present(self):
+    string = "This is an! Example. of no matching delimiters."
+    self.assertEqual(fasta.tokenise(string, "[?,]+"), ["This is an! Example. of no matching delimiters."])
+
+  def test_backslash(self):
+    string = "String \ with a single backslash"
+    self.assertEqual(fasta.tokenise(string, r"[\\ ]+"), ["String", "with", "a", "single", "backslash"])
+
+  def test_forward_slash(self):
+    string = "String with /a forward slash"
+    self.assertEqual(fasta.tokenise(string, "[/ ]+"), ["String", "with", "a", "forward", "slash"])
+
+  def test_hyphen(self):
+    string = "A hyphenated-example."
+    self.assertEqual(fasta.tokenise(string, "[\- ]+"), ["A", "hyphenated", "example."])
+    
