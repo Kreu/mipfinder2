@@ -64,21 +64,13 @@ class Test_extractRecords (unittest.TestCase):
     os.remove("test_fasta.txt")
 
 
-class Test_extractProteinExistenceLevel (unittest.TestCase):
-
+class Test_extractIdentifier (unittest.TestCase):
   def setUp(self):
-    self.level_one= ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=1 SV=1"
-    self.level_five = ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=5 SV=4"
-    self.no_protein_level = ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 SV=4"
+    self.header = ">sp|P05783|K1C18_HUMAN Keratin, type I cytoskeletal 18 OS=Homo sapiens OX=9606 GN=KRT18 PE=1 SV=2"
+  
+  def test_extract_single_identifier(self):
+    assertEqual(fasta.extractIdentifier(header, ["ID"]), ["P05783"])
 
-  def test_level_one(self):
-    self.assertEqual(fasta.getProteinExistenceLevel(self.level_one), 1)
-
-  def test_level_five(self):
-    self.assertEqual(fasta.getProteinExistenceLevel(self.level_five), 5) 
-
-  def test_no_level(self):
-    self.assertEqual(fasta.getProteinExistenceLevel(self.no_protein_level), -1)
 
 
 class Test_extractUniprotID (unittest.TestCase):

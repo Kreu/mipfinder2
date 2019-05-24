@@ -8,7 +8,7 @@ def createFile(sequences: Dict[str, str], output_file: str):
   Args:
     sequences: A dictionary containing FASTA headers as keys and corresponding sequences as values
     output_file: Name of the output file. Overwrites the file if it already exists, otherwise
-        creates a new file.
+        creates a new file. The file will be created in the current directory.
   
   """
   logging.info(f"Writing {output}.fasta")
@@ -26,6 +26,17 @@ def extractRecords(fasta_file: str) -> Dict[str, str]:
 
   Returns:
     A dictionary containing a FASTA header as the key and the corresponding sequence as the value.
+
+  Example:
+    For example, given a file called proteins.fasta that contains the following FASTA records:
+    
+    | >header1
+    | AAAHGT
+    | >header2
+    | GYTVS
+    
+    >>> extractRecords("proteins.fasta")
+    {'header1': 'AAAHGT', 'header2': 'GYTVS'}
 
   """
   with open(fasta_file, 'r') as f:
@@ -68,30 +79,121 @@ def extractRecords(fasta_file: str) -> Dict[str, str]:
     logging.info(f"Extracted {len(fasta_records)} records from {fasta_file}.")
     return fasta_records
 
-def extractProteinExistenceLevel(fasta_header: str) -> int:
-  """Extracts ProteinExistence level from a UniProtKB FASTA header.
+def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
+  """Extracts one or more identifiers from a UniProtKB FASTA header.
 
-  From https://www.uniprot.org/help/fasta-headers:
-  * ProteinExistence is the numerical value describing the evidence for the existence of the protein. (From 1-5)
-    1. Experimental evidence at protein level
-    2. Experimental evidence at transcript level
-    3. Protein inferred from homology
-    4. Protein predicted
-    5. Protein uncertain
+  | The general format of a UniProtKB header is represented as:
+  | >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
+
+  | Using the identifiers described below, this is represented as:
+  | >DB|ID|EN PN OS OX GN PE SV
+
+  For a more detailed explanation of the identifiers, see https://www.uniprot.org/help/fasta-headers
+
+  Args:
+    fasta_header: FASTA header in UniProtKB format
+    identifiers: A list of one or more identifiers to extract from the header. The potential 
+        identifiers are as follows: 
+
+        * DB - UniProt database
+        * ID - UniProt protein accession identifier
+        * EN - UniProt entry name
+        * PN - Protein name
+        * OS - Organism name
+        * OX - Organism NCBI taxonomy identifier
+        * GN - Gene Name
+        * PE - Protein existence level
+        * SV - Sequence version
 
   Returns:
-    An integer denoting the ProteinExistence level for a given header. If ProteinExistence
-    cannot be found within the header, returns -1
+    A list containing the contents of the identifiers. The order in which the contents are in the
+    list is the same order in which they were listed in `identifiers` list.
 
+  Example:
+
+    >>> header = ">sp|P05783|K1C18_HUMAN Keratin, type I cytoskeletal 18 OS=Homo sapiens OX=9606 GN=KRT18 PE=1 SV=2"
+    >>> extractIdentifier(header, ["OS"])
+    ['Homo sapiens']
+    >>> extractIdentifier(header, ["GN"])
+    ['KRT18']
+    >>> extractIdentifier(header, ["PE", "OX", "DB", "ID"])
+    ['1', '9606', 'sp', 'P05783']
+    
   """
-  # PE level is always a single digit number, we can just access the character after `PE=` substring.
-  pe_position: int  = fasta_header.find("PE=")
-  pe_level: int = -1
-  if pe_position != -1:  #If string is not found, find() returns -1
-    pe_level = fasta_header[pe_position + 3]  # It's `3` because in `PE=x` x denotes the PE level integer
-    return int(pe_level)
-  else:
-    return -1
+
+  # There are multiple ways to extract the requested contents, these are just one way of doing it.
+  identifier_contents: list = []
+  for identifier in identifiers:
+    if identifier == "DB":
+      identifier_contents.append[fasta_header[:2]]  # DB is always the first two characters of the header.
+      continue  #  As every identifier only corresponds to one if-condition, we can always continue.
+
+    if identifier == "ID":
+      split_header: list = fasta_header.split('|')
+      uniprot_id: str = split_header[1]
+      identifier_contents.append(uniprot_id)
+      continue
+    
+    if identifier == "EN":
+      tokens: list = tokenise(header, "[| ]+")
+      entry_name: str = tokens[2]  # The above tokenise splits >DB|ID|EN PN... into >DB, ID, EN, PN...
+      identifier_contents.append(entry_name)
+      continue
+
+    if identifier == "PN":
+      # This is the trickiest to extract. Can't really tokenise easily because of unpredictable
+      # contents. The best way to do is to find the previous and the following identifiers and 
+      # append whatever is between them. Since EN and OS are always required (e.g. not optional),
+      # we can use those as our boundaries.
+      tokens: list = tokenise(header, "[| ]+")
+      entry_name: str = tokens[2]
+
+      # TODO: Possibly need to adjust indices to not include bordering spaces
+      entry_name_start_pos: int =  fasta_header.rfind(entry_name)  # Use rfind because we want the last position of the match
+      organism_name_start_pos: int = fasta_header.find("ON=")
+
+      protein_name: str = fasta_header[entry_name_start_pos:organism_name_start_pos]
+      identifier_contents.append(protein_name)
+      continue
+
+    # For the rest of the identifiers we need to find where their identifier is in the string, and
+    # find the next space, which denotes the end of the identifier contents. Since the content sizes
+    # vary we can't simply use string indices. This could be done with regex but I think it's an 
+    # overkill.
+    if identifier == "OS":
+      organism_name_pos: int = fasta_header.rfind("ON=")
+      next_space: int = fasta_header[organism_name_pos:].find(' ')  # Look for the next space starting from the end of ON=
+      organism_name = fasta_header[organism_name_pos:next_space]
+      identifier_contents.append(organism_name)
+      continue
+
+    if identifier == "OX":
+      organism_taxonomy_pos: int = fasta_header.rfind("OX=")
+      next_space: int = fasta_header[organism_taxonomy_pos:].find(' ')  # Look for the next space starting from the end of OX=
+      organism_taxonomy = fasta_header[organism_taxonomy_pos:next_space]
+      identifier_contents.append(organism_taxonomy)
+      continue 
+
+    if identifier == "GN":
+      if fasta_header.rfind("GN=") != -1: # GN is an optional parameter and may not be present
+        gene_name_pos: int = fasta_header.rfind("GN=")
+        next_space: int = fasta_header[gene_name_pos:].find(' ')  # Look for the next space starting from the end of GN=
+        gene_name = fasta_header[gene_name_pos:next_space]
+        identifier_contents.append(gene_name)
+      continue
+      
+    if identifier == "PE":
+      protein_existence_pos: int = fasta_header.rfind("PE=")
+      next_space: int = fasta_header[protein_existence_pos:].find(' ')  # Look for the next space starting from the end of PE=
+      protein_existence = fasta_header[protein_existence_pos:next_space]
+      identifier_contents.append(protein_existence) 
+    #   
+    if identifier == "SV":
+       sequence_variant_pos: int = fasta_header.rfind("SV=")
+       # Since SV is the last token, append substring from = till the end of the header
+       identifier_contents.append(fasta_header[sequence_variant_pos:]) 
+
+  return identifier_contents
 
 def extractUniprotID(fasta_header: str, protein_existence_cutoff: int) -> str:
   #TODO 15/05/2019, Valdeko: Maybe let user specify what record they want to extract,
@@ -103,7 +205,7 @@ def extractUniprotID(fasta_header: str, protein_existence_cutoff: int) -> str:
 
   Args:
     fasta_header: UniProt FASTA header for a protein record.
-    protein_existence_cutoff: An integer representing which ProteinExistence levels (see
+    protein_existence_cutoff: An integer representing which ProteinExistence levels (see link
         above) to filter out. Filters out everything that is equal to 
         AND larger (e.g. protein_existence_cutoff=3 only shows proteins
         with PE level of 1 and 2)
