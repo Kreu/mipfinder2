@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Dict, List
 
 def createFile(sequences: Dict[str, str], output_file: str):
@@ -145,5 +146,5 @@ def tokenise(string: str, delimiter: str) -> List[str]:
 
   """
 
-  tokens = filter(None, re.split(delimiter, string))
+  tokens = list(filter(None, re.split(delimiter, string)))  # Need to wrap in list() in Python3
   return tokens
