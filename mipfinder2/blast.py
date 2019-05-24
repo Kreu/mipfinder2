@@ -19,7 +19,7 @@ def createDatabase(fasta_file: str, output_file: str):
   logging.info(f"Running the command: {make_db_command}")
   subprocess.run(make_db_command.split(' '))
 
-def run(commmand: str):
+def run(command: str):
   """Runs the specified command in the terminal. 
 
   Args:
@@ -30,4 +30,4 @@ def run(commmand: str):
     >>> run(command)
   
   """
-  subprocess.run(commmand.split(' '))
+  subprocess.run(command.split(' '))
