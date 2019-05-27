@@ -122,7 +122,6 @@ def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
     
   """
   identifier_contents: list = []
-  print(f"Identifiers: {identifiers}")
   for identifier in identifiers:
     tokens = tokenise(fasta_header, "[>| ]+")
     print(tokens)
