@@ -84,16 +84,6 @@ class Test_extractIdentifier (unittest.TestCase):
     self.assertEqual(fasta.extractIdentifier(self.header, ["ID", "SV"]), ["P05783", "2"])
     self.assertEqual(fasta.extractIdentifier(self.header, ["EN", "ID"]), ["K1C18_HUMAN", "P05783"])
 
-class Test_extractUniprotID (unittest.TestCase):
-
-  def setUp(self):
-    self.fasta_header = ">sp|Q9C5U0|AHK4_ARATH Histidine kinase 4 OS=Arabidopsis thaliana OX=3702 GN=AHK4 PE=1 SV=1"
-    self.expected_output = "Q9C5U0"
-
-  def test_uniprot_kb_header(self):
-    self.assertEqual(fasta.extractUniprotID(self.fasta_header, 3), self.expected_output)
-
-
 class Test_tokenise (unittest.TestCase):
 
   def test_delimiters_present(self):

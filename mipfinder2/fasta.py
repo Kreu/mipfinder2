@@ -191,40 +191,11 @@ def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
     if identifier == "SV":
        sequence_variant_pos: int = fasta_header.find("SV=")
        # Since SV is the last token, append substring from = till the end of the header
-       identifier_contents.append(fasta_header[sequence_variant_pos + 3:]) # After 3 characters we get the content
+       # find() returns the position of 'S' in "SV=3", so we add three to get the number.
+       identifier_contents.append(fasta_header[sequence_variant_pos + 3:])
        continue 
 
   return identifier_contents
-
-def extractUniprotID(fasta_header: str, protein_existence_cutoff: int) -> str:
-  #TODO 15/05/2019, Valdeko: Maybe let user specify what record they want to extract,
-  #possiby by specifying a column?
-  """Extract the Uniprot ID from a UniProtKB FASTA header.
-
-  For a detailed description of UniProt FASTA headers, see here:
-  https://www.uniprot.org/help/fasta-headers
-
-  Args:
-    fasta_header: UniProt FASTA header for a protein record.
-    protein_existence_cutoff: An integer representing which ProteinExistence levels (see link
-        above) to filter out. Filters out everything that is equal to 
-        AND larger (e.g. protein_existence_cutoff=3 only shows proteins
-        with PE level of 1 and 2)
-
-  Returns:
-    A string containing the UniProt ID of the given FASTA record. If no UniProt ID can be detected 
-    or if ProteinExistence level is equal to or above the threshold, an empty string is returned.
-  """
-
-  if extractProteinExistenceLevel(fasta_header) >= protein_existence_cutoff:
-    return ""
-
-  # Split the FASTA header by `|`, this results in a list where the UniProt ID is in the
-  # second column, unless the header is malformed.
-  split_header: str = fasta_header.split('|')
-  uniprot_id: str = split_header[1]
-  return uniprot_id
-
 
 def tokenise(string: str, delimiter: str) -> List[str]:
   """Splits a string into tokens based on the specified delimiter(s).
