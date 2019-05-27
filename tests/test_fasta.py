@@ -67,6 +67,7 @@ class Test_extractRecords (unittest.TestCase):
 class Test_extractIdentifier (unittest.TestCase):
   def setUp(self):
     self.header = ">sp|P05783|K1C18_HUMAN Keratin, type I cytoskeletal 18 OS=Homo sapiens OX=9606 GN=KRT18 PE=1 SV=2"
+    self.header_with_no_gene_name = ">sp|P0CG48|UBC_HUMAN Polyubiquitin-C OS=Homo sapiens OX=9606 PE=1 SV=3"
   
   def test_extract_single_identifier(self):
     self.assertEqual(fasta.extractIdentifier(self.header, ["DB"]), ["sp"])
@@ -83,6 +84,19 @@ class Test_extractIdentifier (unittest.TestCase):
     self.assertEqual(fasta.extractIdentifier(self.header, ["DB", "EN"]), ["sp", "K1C18_HUMAN"])
     self.assertEqual(fasta.extractIdentifier(self.header, ["ID", "SV"]), ["P05783", "2"])
     self.assertEqual(fasta.extractIdentifier(self.header, ["EN", "ID"]), ["K1C18_HUMAN", "P05783"])
+
+  def test_extract_single_no_gene_name(self):
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["DB"]), ["sp"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["ID"]), ["P0CG48"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["EN"]), ["UBC_HUMAN"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["PN"]), ["Polyubiquitin-C"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["OS"]), ["Homo sapiens"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["OX"]), ["9606"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["PE"]), ["1"])
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["SV"]), ["3"])
+
+  def test_extract_GN_from_no_GN_string(self):
+    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["GN"]), [""])
 
 class Test_tokenise (unittest.TestCase):
 
