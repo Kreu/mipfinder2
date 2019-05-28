@@ -55,14 +55,14 @@ class StringDB(object):
     """
     return self._id_table[genomic_locus_tag]
 
-  def extractInteractions(self, score_cutoff: int=700, delimiter: str=' ', format="UNIPROT") -> Dict[str, List[str]]:
+  def extractInteractions(self, score_cutoff: int=700, delimiter: str=' ') -> Dict[str, List[str]]:
     """Extracts protein-protein interaction information from the STRING database.
 
     Args:
       score_cutoff: Exclude all protein-protein interactions below this threshold.
       delimiter: Character by which to split values into separate tokens. Defaults to space (' ')
-      format: Output format of protein accession codes. Defauls to `UNIPROT`.
-          Other possible format is `STRING`.
+      format: Output format of protein accession codes. Defauls to `STRING`.
+          Other possible format is `UNIPROT`.
 
     Returns:
       If `format=UNIPROT`, returns a dictionary containing UniProt accession numbers as keys and
@@ -98,6 +98,7 @@ class StringDB(object):
         if interaction_score < score_cutoff:
           continue
 
+        # TODO: We DO need the isoform because they will differ.
         # All STRING aliases in an organism database are suffixed with the
         # NCBI taxonomic identifier in the following format:
         # xxxx.GENE_IDENTIFIER.ISOFORM	
@@ -116,14 +117,14 @@ class StringDB(object):
           else:
             protein_interactions[first_protein] = [second_protein]
 
-        if format == "UNIPROT":
-          try:
-            if first_protein in protein_interactions:
-              protein_interactions[first_protein].append(self.toUniprot(second_protein))
-            else:
-              protein_interactions[first_protein] = [self.toUniprot(second_protein)]
-          except KeyError:
-            logging.warning(f"Could not find a UniProt accession code equivalent to STRING ID {second_protein}")
+        # if format == "UNIPROT":
+        #   try:
+        #     if first_protein in protein_interactions:
+        #       protein_interactions[first_protein].append(self.toUniprot(second_protein))
+        #     else:
+        #       protein_interactions[first_protein] = [self.toUniprot(second_protein)]
+        #   except KeyError:
+        #     logging.warning(f"Could not find a UniProt accession code equivalent to STRING ID {second_protein}")
 
     logging.info(f"Extracted {len(protein_interactions)} protein-protein interactions from {self._conf.string_database}.") 
 

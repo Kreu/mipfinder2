@@ -31,3 +31,7 @@ def run(command: str):
   
   """
   subprocess.run(command.split(' '))
+
+def extractResults(blast_results: str):
+  """Extracts """
+  pass

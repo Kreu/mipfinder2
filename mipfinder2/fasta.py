@@ -79,7 +79,38 @@ def extractRecords(fasta_file: str) -> Dict[str, str]:
     logging.info(f"Extracted {len(fasta_records)} records from {fasta_file}.")
     return fasta_records
 
-def extractIdentifier(fasta_header: str, identifiers: List[str]) -> List[str]:
+def extractAraportHeader(fasta_header: str) -> List[str]:
+  """Extracts information from an Araport FASTA header.
+
+  Araport headers are set up as follows:
+  >GENOMIC_LOCUS_TAG.VERSION_NUMBER | PROTEIN_DESCRIPTION | CHROMOSOME_LOCATION <space> FORWARD <space> LENGTH=xxxxx | TODO: What's the last number?
+
+  Args:
+    fasta_header: FASTA header in Araport format
+
+  Returns:
+    A list of strings containing GENOMIC_LOCUS_TAG, VERSION_NUMBER, PROTEIN_DESCRIPTION in that 
+    order.
+
+  Raises:
+    ValueError: If GENOMIC_LOCUS_TAG or VERSION_NUMBER cannot be found.
+  """
+  fasta_header = fasta_header.strip('\n')
+  tokens: List[str] = tokenise(fasta_header, "[> .|]+")
+  genomic_locus_tag = tokens[0]
+  version_number = tokens[1]
+  
+  protein_desc_tokens: List[str] = tokenise(fasta_header, "[|]+")
+  protein_description = protein_desc_tokens[1].strip(' ')
+
+  if genomic_locus_tag == "" or version_number == "":
+    raise ValueError("Genomic locus tag or version number is not present in Araport FASTA record header.")
+    logging.info(f"Genomic locus tag or version number is not present in Araport FASTA record header.")
+
+  header_contents = [genomic_locus_tag, version_number, protein_description]
+  return header_contents
+
+def extractUniprotHeader(fasta_header: str, identifiers: List[str]) -> List[str]:
   """Extracts one or more identifiers from a UniProtKB FASTA header.
 
   | The general format of a UniProtKB header is represented as:

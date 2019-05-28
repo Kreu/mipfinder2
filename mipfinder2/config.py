@@ -1,7 +1,6 @@
 import configparser
 import logging
 import os
-import apt
 
 class Config:
   """Class to read in and verify the configuration file for miPFinder.
@@ -10,7 +9,7 @@ class Config:
   set correctly. Optional parameters are not checked; it is up to the calling function using
   optional parameters to ensure they point to a valid file.
 
-  Args:
+  Attributes:
     config_file (str): Path to the mipfinder configuration file 
 
   """
@@ -38,6 +37,9 @@ class Config:
 
     # TAIR configuration section
     self.tair_protein_aliases: str = config['TAIR']['tair_protein_aliases']  # Required 
+
+    # ARAPORT configuration section
+    self.araport_database: str = config['ARAPORT']['araport_database']
 
     # OTHER configuration section
     self.curated_protein_aliases: str = config['OTHER']['curated_protein_aliases']

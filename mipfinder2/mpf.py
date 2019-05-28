@@ -14,7 +14,7 @@ import blast
 import config
 import fasta
 import interpro
-import protein
+from protein import Protein
 import string_db
 
 
@@ -24,7 +24,7 @@ def createDir(dir_name: str):
   
   If the parent directories in the path are missing, they are created. If the directory exists,
   it will be recreated. 
-  
+ rotein.Protein 
   Args:
     dir_name: Name of the directory to be created.
   
@@ -46,21 +46,21 @@ def removeDir(dir_name: str):
     pass
 
 
-########################################Sølvgade ##########################################
-#   __  __   _____   _____    ______   _Sølvgade ___   _   _   _____    ______   _____    #
-#  |  \/  | |_   _| |  __ \  |  ____| |_Sølvgade   _| | \ | | |  __ \  |  ____| |  __ \   #
-#  | \  / |   | |   | |__) | | |__      Sølvgade  |   |  \| | | |  | | | |__    | |__) |  #
-#  | |\/| |   | |   |  ___/  |  __|     Sølvgade  |   | . ` | | |  | | |  __|   |  _  /   #
-#  | |  | |  _| |_  | |      | |       _Sølvgade  |_  | |\  | | |__| | | |____  | | \ \   #
-#  |_|  |_| |_____| |_|      |_|      |_Sølvgade ___| |_| \_| |_____/  |______| |_|  \_\  #
-#                                            protein                                     #
-#                                 ___        protein ___                                 #
-#                                |__ \       protein/ _ \                                #
-#                        __   __    ) |     |protein | | |                               #
-#                        \ \ / /   / /      |protein | | |                               #
-#                         \ V /   / /_   _  |protein |_| |                               #
-#                          \_/   |____| (_)  protein\___/                                #
-#                                                                                 #
+##################################################################################
+#   __  __   _____   _____    ______   ____   _   _   _____    ______   _____    #
+#  |  \/  | |_   _| |  __ \  |  ____| |_  _| | \ | | |  __ \  |  ____| |  __ \   #
+#  | \  / |   | |   | |__) | | |__      | |  |  \| | | |  | | | |__    | |__) |  #
+#  | |\/| |   | |   |  ___/  |  __|     | |  | . ` | | |  | | |  __|   |  _  /   #
+#  | |  | |  _| |_  | |      | |       _| |_ | |\  | | |__| | | |____  | | \ \   #
+#  |_|  |_| |_____| |_|      |_|      |____| |_| \_| |_____/  |______| |_|  \_\  #
+#                                                                                #
+#                                 ___        ___                                 #
+#                                |__ \      / _ \                                #
+#                        __   __    ) |     || | |                               #
+#                        \ \ / /   / /      || | |                               #
+#                         \ V /   / /_   _  ||_| |                               #
+#                          \_/   |____| (_) \___/                                #
+#                                                                                #
 ###################################################################################
 
 def main():
@@ -75,7 +75,7 @@ def main():
                       filename = 'mipfinder.log',
                       filemode = 'w',
                       format='%(asctime)s %(module)s.%(funcName)s %(levelname)-8s %(message)s',
-                      datefmt = "%Y-%m-%d %H:%M:%S")
+                      datefmt = "%Y%m-%d %H:%M:%S")
   # format='%(asctime)s %(module)s %(name)s.%(funcName)s %(levelname)-8s %(message)s')
     
   logging.info("Starting MIPFINDER v2.0")
@@ -85,23 +85,44 @@ def main():
 
   # Create directories to hold files for data processing
   createDir('blast')
-
-
   # Main part
-  logging.info(f"Extracting all protein IDs and sequences from {conf.organism_protein_list}...")
-  organism_protein_list = fasta.extractRecords(conf.organism_protein_list)
+  # logging.info(f"Extracting all protein IDs and sequences from {conf.organism_protein_list}...")
+  # organism_protein_list: dict = fasta.extractRecords(conf.organism_protein_list)
 
-  logging.info(f"Extracting all known microproteins from {conf.known_mips}")
-  known_mips = fasta.extractRecords(conf.known_mips)
+  # logging.info(f"Extracting all known microproteins from {conf.known_mips}")
+  # known_mips: dict = fasta.extractRecords(conf.known_mips)
 
-  # Process STRING database
-  string_protein_interactions = string_db.extractLinks(conf.string_database, 700, ' ')
+  ########################
+  #   ARAPORT DATABASE   #
+  ########################
 
-  potential_mips: dict = protein.filterBySize(organism_protein_list, 1, 150)
-  potential_ancestors: dict = protein.filterBySize(organism_protein_list, 240)
-  potential_intermediaries: dict = protein.filterBySize(organism_protein_list, 151, 239)
+  # Read in Araport database protein records and construct Protein objects from them
+  araport_fasta_records: dict = fasta.extractRecords(conf.araport_database)
 
-  # Extract th
+  logging.info(f"Extracting protein information from Araport FASTA headers")
+  for header, sequence in araport_fasta_records.items():
+    header_content: list = fasta.extractAraportHeader(header)
+    protein_sequence: str = sequence
+    protein_araport_tag: str = header_content[0]
+    protein_sequence_version: int = int(header_content[1])
+    protein_description: str = header_content[2]
+
+    Protein(protein_sequence, protein_araport_tag, protein_sequence_version, protein_description)
+  logging.info(f"Created {len(Protein.proteins)} protein entries with a unique genomic locus tag.")
+
+  #######################
+  #   STRING DATABASE   #
+  #######################
+
+  string_database = string_db.StringDB(conf)
+
+  # Extract protein-protein interactions with a certain confidence level:
+  # string_database.extractInteractions()
+
+  # potential_mips: dict = protein.filterBySize(organism_protein_list, 1, 150)
+  # potential_ancestors: dict = protein.filterBySize(organism_protein_list, 240)
+  # potential_intermediaries: dict = protein.filterBySize(organism_protein_list, 151, 239)
+
 
   # Create two groups of proteins, one with those of sequence length shorter than that of 
   # conf.maximum_mip_length and the other with sequence longer than the conf.minimum_ancestor_length
@@ -109,11 +130,11 @@ def main():
   potential_ancestors = {}
 
 
-  # fasta.createFile(potential_mips, "mip_proteins.fasta")
-  # fasta.createFile(potential_ancestors, "ancestor_proteins.fasta")
+  # fasta.createFile(potential_mips, "blast/mip_proteins.fasta")
+  # fasta.createFile(potential_ancestors, "blast/ancestor_proteins.fasta")
 
-  # blast.createDatabase("ancestor_proteins.fasta", "ancestor_db")
-  # blast.run("blastp -query mip_proteins.fasta -db ancestor_db -outfmt 7 -out mip_blast.txt")
+  # blast.createDatabase("blast/ancestor_proteins.fasta", "ancestor_db")
+  # blast.run("blastp -query blast/mip_proteins.fasta -db blast/ancestor_db -outfmt 7 -out mip_blast.txt")
 
   # interpro.processTSV()
 

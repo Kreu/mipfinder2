@@ -70,33 +70,33 @@ class Test_extractIdentifier (unittest.TestCase):
     self.header_with_no_gene_name = ">sp|P0CG48|UBC_HUMAN Polyubiquitin-C OS=Homo sapiens OX=9606 PE=1 SV=3"
   
   def test_extract_single_identifier(self):
-    self.assertEqual(fasta.extractIdentifier(self.header, ["DB"]), ["sp"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["ID"]), ["P05783"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["EN"]), ["K1C18_HUMAN"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["PN"]), ["Keratin, type I cytoskeletal 18"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["OS"]), ["Homo sapiens"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["OX"]), ["9606"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["GN"]), ["KRT18"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["PE"]), ["1"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["SV"]), ["2"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["DB"]), ["sp"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["ID"]), ["P05783"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["EN"]), ["K1C18_HUMAN"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["PN"]), ["Keratin, type I cytoskeletal 18"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["OS"]), ["Homo sapiens"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["OX"]), ["9606"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["GN"]), ["KRT18"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["PE"]), ["1"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["SV"]), ["2"])
 
   def test_multiple_identifiers(self):
-    self.assertEqual(fasta.extractIdentifier(self.header, ["DB", "EN"]), ["sp", "K1C18_HUMAN"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["ID", "SV"]), ["P05783", "2"])
-    self.assertEqual(fasta.extractIdentifier(self.header, ["EN", "ID"]), ["K1C18_HUMAN", "P05783"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["DB", "EN"]), ["sp", "K1C18_HUMAN"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["ID", "SV"]), ["P05783", "2"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header, ["EN", "ID"]), ["K1C18_HUMAN", "P05783"])
 
   def test_extract_single_no_gene_name(self):
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["DB"]), ["sp"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["ID"]), ["P0CG48"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["EN"]), ["UBC_HUMAN"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["PN"]), ["Polyubiquitin-C"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["OS"]), ["Homo sapiens"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["OX"]), ["9606"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["PE"]), ["1"])
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["SV"]), ["3"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["DB"]), ["sp"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["ID"]), ["P0CG48"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["EN"]), ["UBC_HUMAN"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["PN"]), ["Polyubiquitin-C"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["OS"]), ["Homo sapiens"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["OX"]), ["9606"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["PE"]), ["1"])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["SV"]), ["3"])
 
   def test_extract_GN_from_no_GN_string(self):
-    self.assertEqual(fasta.extractIdentifier(self.header_with_no_gene_name, ["GN"]), [""])
+    self.assertEqual(fasta.extractUniprotHeader(self.header_with_no_gene_name, ["GN"]), [""])
 
 class Test_tokenise (unittest.TestCase):
 
@@ -119,3 +119,13 @@ class Test_tokenise (unittest.TestCase):
   def test_hyphen(self):
     string = "A hyphenated-example."
     self.assertEqual(fasta.tokenise(string, "[\- ]+"), ["A", "hyphenated", "example."])
+
+
+class Test_extractAraportHeader (unittest.TestCase):
+
+  def setUp(self):
+    self.header = ">AT5G61190.10 | putative endonuclease or glycosyl hydrolase with C2H2-type zinc finger domain-containing protein | Chr5:24615480-24619886 FORWARD LENGTH=1010 | 201606"
+
+  def test_valid_header(self):
+    self.assertEqual(fasta.extractAraportHeader(self.header), ["AT5G61190", "10", "putative endonuclease or glycosyl hydrolase with C2H2-type zinc finger domain-containing protein"])
+                                                      
