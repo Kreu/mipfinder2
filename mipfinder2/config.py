@@ -3,18 +3,19 @@ import logging
 import os
 
 class Config:
-  """Class to read in and verify the configuration file for miPFinder.
-  
-  Ensures that the configuration file is correctly read and that the required parameters have been
-  set correctly. Optional parameters are not checked; it is up to the calling function using
-  optional parameters to ensure they point to a valid file.
-
-  Attributes:
-    config_file (str): Path to the mipfinder configuration file 
-
-  """
-
   def __init__(self, config_file: str):
+    """Class to read in and verify the configuration file for miPFinder.
+    
+    Ensures that the configuration file is correctly read and that the required parameters point to
+    existing files. It is up to the user to ensure that the configuration parameters are correct.
+    Required parameters are not checked for data integrity, e.g. if a parameter expecting an integer
+    is given a string value, the program will crash. Optional parameters are not checked; it is up to 
+    the calling function using optional parameters to ensure they point to a valid file.
+
+    Args:
+      config_file: Path to the mipfinder configuration file.
+
+    """
     self.config_file = config_file
     self._readConfiguration()
     self._verifyConfiguration()
@@ -34,6 +35,7 @@ class Config:
     self.string_database: str = config['STRING']['string_database']  # Required
     self.string_protein_aliases: str = config['STRING']['string_protein_aliases']  # Required
     self.string_to_uniprot: str = config['STRING']['string_to_uniprot']
+    self.string_cutoff: int = config.getint('STRING', 'string_cutoff')
 
     # TAIR configuration section
     self.tair_protein_aliases: str = config['TAIR']['tair_protein_aliases']  # Required 
@@ -61,6 +63,13 @@ class Config:
     _fileExists(self.tair_protein_aliases)
 
     logging.info("All required dependencies detected.") 
+
+    # try:
+    #   conf.string_cutoff_int = int(conf.string_cutoff)
+    # if (conf.string_cutoff = ""):
+    #   conf.string_cutoff = 700 
+    #   logging.warning(f"string_cutoff variable as not been set in {conf.config_file}. Setting the "
+    #                   f"cutoff value to {default}."})
 
     ##########################
     #   OPTIONAL VARIABLES   #

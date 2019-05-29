@@ -108,7 +108,17 @@ def main():
     protein_description: str = header_content[2]
 
     Protein(protein_sequence, protein_araport_tag, protein_sequence_version, protein_description)
-  logging.info(f"Created {len(Protein.proteins)} protein entries with a unique genomic locus tag.")
+
+  total_entries: int = sum([1 for v in Protein.proteins.values()])
+  logging.info(f"Created {total_entries} unique protein entries.")
+
+  small_proteins: Dict[Protein] = Protein.filterByLength(1, 150)
+  medium_proteins: Dict[Protein] = Protein.filterByLength(151, 300)
+  large_proteins: Dict[Protein] = Protein.filterByLength(301)
+
+  print(len(small_proteins))
+  print(len(medium_proteins))
+  print(len(large_proteins))
 
   #######################
   #   STRING DATABASE   #
@@ -116,13 +126,22 @@ def main():
 
   string_database = string_db.StringDB(conf)
 
-  # Extract protein-protein interactions with a certain confidence level:
-  # string_database.extractInteractions()
-
   # potential_mips: dict = protein.filterBySize(organism_protein_list, 1, 150)
   # potential_ancestors: dict = protein.filterBySize(organism_protein_list, 240)
   # potential_intermediaries: dict = protein.filterBySize(organism_protein_list, 151, 239)
 
+  # Find potential interactors using the STRING database
+  logging.info(f"Mapping proteins to their interaction partners using STRING database.")
+  for protein_id, protein_obj in Protein.proteins.items():
+    # print(f"Finding interactors for {protein_id}")
+    string_database.findInteractors(protein_obj)
+
+
+  #############################
+  #   INTERPROSCAN DATABASE   #
+  #############################
+
+  
 
   # Create two groups of proteins, one with those of sequence length shorter than that of 
   # conf.maximum_mip_length and the other with sequence longer than the conf.minimum_ancestor_length

@@ -110,122 +110,122 @@ def extractAraportHeader(fasta_header: str) -> List[str]:
   header_contents = [genomic_locus_tag, version_number, protein_description]
   return header_contents
 
-def extractUniprotHeader(fasta_header: str, identifiers: List[str]) -> List[str]:
-  """Extracts one or more identifiers from a UniProtKB FASTA header.
+# def extractUniprotHeader(fasta_header: str, identifiers: List[str]) -> List[str]:
+#   """Extracts one or more identifiers from a UniProtKB FASTA header.
 
-  | The general format of a UniProtKB header is represented as:
-  | >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
+#   | The general format of a UniProtKB header is represented as:
+#   | >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
 
-  | Using the identifiers described below, this is represented as:
-  | >DB|ID|EN PN OS OX GN PE SV
+#   | Using the identifiers described below, this is represented as:
+#   | >DB|ID|EN PN OS OX GN PE SV
 
-  For a more detailed explanation of the identifiers, see https://www.uniprot.org/help/fasta-headers
+#   For a more detailed explanation of the identifiers, see https://www.uniprot.org/help/fasta-headers
 
-  Args:
-    fasta_header: FASTA header in UniProtKB format
-    identifiers: A list of one or more identifiers to extract from the header. The potential 
-        identifiers are as follows: 
+#   Args:
+#     fasta_header: FASTA header in UniProtKB format
+#     identifiers: A list of one or more identifiers to extract from the header. The potential 
+#         identifiers are as follows: 
 
-        * DB - UniProt database
-        * ID - UniProt protein accession identifier
-        * EN - UniProt entry name
-        * PN - Protein name
-        * OS - Organism name
-        * OX - Organism NCBI taxonomy identifier
-        * GN - Gene Name
-        * PE - Protein existence level
-        * SV - Sequence version
+#         * DB - UniProt database
+#         * ID - UniProt protein accession identifier
+#         * EN - UniProt entry name
+#         * PN - Protein name
+#         * OS - Organism name
+#         * OX - Organism NCBI taxonomy identifier
+#         * GN - Gene Name
+#         * PE - Protein existence level
+#         * SV - Sequence version
 
-  Returns:
-    A list containing the contents of the identifiers. The order in which the contents are in the
-    list is the same order in which they were listed in `identifiers` list. If the identifier is not
-    present in the FASTA header, an empty string is returned.
+#   Returns:
+#     A list containing the contents of the identifiers. The order in which the contents are in the
+#     list is the same order in which they were listed in `identifiers` list. If the identifier is not
+#     present in the FASTA header, an empty string is returned.
 
-  Example:
+#   Example:
 
-    >>> header = ">sp|P05783|K1C18_HUMAN Keratin, type I cytoskeletal 18 OS=Homo sapiens OX=9606 GN=KRT18 PE=1 SV=2"
-    >>> extractIdentifier(header, ["OS"])
-    ['Homo sapiens']
-    >>> extractIdentifier(header, ["GN"])
-    ['KRT18']
-    >>> extractIdentifier(header, ["PE", "OX", "DB", "ID"])
-    ['1', '9606', 'sp', 'P05783']
+#     >>> header = ">sp|P05783|K1C18_HUMAN Keratin, type I cytoskeletal 18 OS=Homo sapiens OX=9606 GN=KRT18 PE=1 SV=2"
+#     >>> extractIdentifier(header, ["OS"])
+#     ['Homo sapiens']
+#     >>> extractIdentifier(header, ["GN"])
+#     ['KRT18']
+#     >>> extractIdentifier(header, ["PE", "OX", "DB", "ID"])
+#     ['1', '9606', 'sp', 'P05783']
     
-  """
-  identifier_contents: list = []
-  for identifier in identifiers:
-    tokens = tokenise(fasta_header, "[>| ]+")
-    print(tokens)
-    # After tokenising, the first three identifiers will the the 0, 1 and 2 indices in the returned
-    # list.
-    if identifier == "DB":
-      uniprot_database_type: str = tokens[0]
-      identifier_contents.append(uniprot_database_type)
-      continue  #  As every identifier only corresponds to one if-condition, we can always continue.
+#   """
+#   identifier_contents: list = []
+#   for identifier in identifiers:
+#     tokens = tokenise(fasta_header, "[>| ]+")
+#     print(tokens)
+#     # After tokenising, the first three identifiers will the the 0, 1 and 2 indices in the returned
+#     # list.
+#     if identifier == "DB":
+#       uniprot_database_type: str = tokens[0]
+#       identifier_contents.append(uniprot_database_type)
+#       continue  #  As every identifier only corresponds to one if-condition, we can always continue.
 
-    if identifier == "ID":
-      uniprot_id: str = tokens[1]
-      identifier_contents.append(uniprot_id)
-      continue
+#     if identifier == "ID":
+#       uniprot_id: str = tokens[1]
+#       identifier_contents.append(uniprot_id)
+#       continue
     
-    if identifier == "EN":
-      entry_name: str = tokens[2] 
-      identifier_contents.append(entry_name)
-      continue
+#     if identifier == "EN":
+#       entry_name: str = tokens[2] 
+#       identifier_contents.append(entry_name)
+#       continue
 
-    if identifier == "PN":
-      # This is the trickiest to extract. Can't really tokenise easily because of unpredictable
-      # contents. The best way to do is to find the previous and the following identifiers and 
-      # append whatever is between them. Since EN and OS are always required (e.g. not optional),
-      # we can use those as our boundaries.
-      entry_name: str = tokens[2]
-      entry_name_start_pos: int = fasta_header.find(entry_name)
-      entry_name_end_pos: int = entry_name_start_pos + len(entry_name)
+#     if identifier == "PN":
+#       # This is the trickiest to extract. Can't really tokenise easily because of unpredictable
+#       # contents. The best way to do is to find the previous and the following identifiers and 
+#       # append whatever is between them. Since EN and OS are always required (e.g. not optional),
+#       # we can use those as our boundaries.
+#       entry_name: str = tokens[2]
+#       entry_name_start_pos: int = fasta_header.find(entry_name)
+#       entry_name_end_pos: int = entry_name_start_pos + len(entry_name)
 
-      organism_name_start_pos: int = fasta_header.find("OS=")
+#       organism_name_start_pos: int = fasta_header.find("OS=")
 
-      protein_name: str = fasta_header[entry_name_end_pos:organism_name_start_pos]
+#       protein_name: str = fasta_header[entry_name_end_pos:organism_name_start_pos]
 
-      # Rather than use string slicing, we can just strip the leading and trailing spaces.
-      identifier_contents.append(protein_name.strip(' '))
-      continue
+#       # Rather than use string slicing, we can just strip the leading and trailing spaces.
+#       identifier_contents.append(protein_name.strip(' '))
+#       continue
 
-    # For the rest of the identifiers we need to find where their identifier is in the string, and
-    # find the next identifier, which denotes the end of the identifier contents. Since the content
-    # sizes vary we can't simply use string indices. This could be done with regex but I think it's
-    # an overkill.
-    # To make this general for all the identifiers, we can just look for the next '=' character
-    # which (should) only exist in the identifiers.
-    if identifier == "OS" or identifier == "OX" or identifier == "PE" or identifier == "GN":
-      # Since "GN" identifier is optional, we must test whether it is present.
-      if identifier == "GN" and fasta_header.find("GN=") == -1:  # find() returns -1 if string not found.
-        identifier_contents.append("")  # As per API
-        continue
+#     # For the rest of the identifiers we need to find where their identifier is in the string, and
+#     # find the next identifier, which denotes the end of the identifier contents. Since the content
+#     # sizes vary we can't simply use string indices. This could be done with regex but I think it's
+#     # an overkill.
+#     # To make this general for all the identifiers, we can just look for the next '=' character
+#     # which (should) only exist in the identifiers.
+#     if identifier == "OS" or identifier == "OX" or identifier == "PE" or identifier == "GN":
+#       # Since "GN" identifier is optional, we must test whether it is present.
+#       if identifier == "GN" and fasta_header.find("GN=") == -1:  # find() returns -1 if string not found.
+#         identifier_contents.append("")  # As per API
+#         continue
 
-      searchable_identifier = identifier + '='  # User-searchable list of identifiers lacks the '='
-      current_identifier_start_pos: int = fasta_header.find(searchable_identifier)
-      current_identifier_end_pos: int = current_identifier_start_pos + len(searchable_identifier)
+#       searchable_identifier = identifier + '='  # User-searchable list of identifiers lacks the '='
+#       current_identifier_start_pos: int = fasta_header.find(searchable_identifier)
+#       current_identifier_end_pos: int = current_identifier_start_pos + len(searchable_identifier)
 
-      next_identifier_pos: int = fasta_header[current_identifier_end_pos:].find('=')
+#       next_identifier_pos: int = fasta_header[current_identifier_end_pos:].find('=')
 
-      # As the identifier are in the format of XX=Y and we look for =, we must subtract 2 to get the
-      # beginning of the next identifier.
-      next_identifier_start: int = current_identifier_end_pos + next_identifier_pos - 2
+#       # As the identifier are in the format of XX=Y and we look for =, we must subtract 2 to get the
+#       # beginning of the next identifier.
+#       next_identifier_start: int = current_identifier_end_pos + next_identifier_pos - 2
 
-      current_identifier_contents = fasta_header[current_identifier_end_pos:next_identifier_start]
+#       current_identifier_contents = fasta_header[current_identifier_end_pos:next_identifier_start]
 
-      # Strip extra spaces from either end (cleaner than string slicing) before appending.
-      identifier_contents.append(current_identifier_contents.strip(' '))
-      continue
+#       # Strip extra spaces from either end (cleaner than string slicing) before appending.
+#       identifier_contents.append(current_identifier_contents.strip(' '))
+#       continue
 
-    if identifier == "SV":
-       sequence_variant_pos: int = fasta_header.find("SV=")
-       # Since SV is the last token, append substring from = till the end of the header
-       # find() returns the position of 'S' in "SV=3", so we add three to get the number.
-       identifier_contents.append(fasta_header[sequence_variant_pos + 3:])
-       continue 
+#     if identifier == "SV":
+#        sequence_variant_pos: int = fasta_header.find("SV=")
+#        # Since SV is the last token, append substring from = till the end of the header
+#        # find() returns the position of 'S' in "SV=3", so we add three to get the number.
+#        identifier_contents.append(fasta_header[sequence_variant_pos + 3:])
+#        continue 
 
-  return identifier_contents
+#   return identifier_contents
 
 def tokenise(string: str, delimiter: str) -> List[str]:
   """Splits a string into tokens based on the specified delimiter(s).
