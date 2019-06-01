@@ -65,38 +65,44 @@ def removeDir(dir_name: str):
 
 def main():
 
-  # Setup
-  currentdir = os.path.dirname(os.path.realpath(__file__))
-  sys.path.append(os.path.dirname(currentdir))
 
-  # Set up logging configuration
+
+  #####################
+  #   LOGGING SETUP   #
+  #####################
+
   logging.getLogger(__name__)
   logging.basicConfig(level=logging.DEBUG,
                       filename = 'mipfinder.log',
                       filemode = 'w',
                       format='%(asctime)s %(module)s.%(funcName)s %(levelname)-8s %(message)s',
                       datefmt = "%Y%m-%d %H:%M:%S")
-  # format='%(asctime)s %(module)s %(name)s.%(funcName)s %(levelname)-8s %(message)s')
-    
-  logging.info("Starting MIPFINDER v2.0")
-  logging.debug(f"Working directory is {os.getcwd()}")
-  start_time = datetime.datetime.now() 
   conf = config.Config('config.ini')
 
-  # Create directories to hold files for data processing
-  createDir('blast')
-  # Main part
-  # logging.info(f"Extracting all protein IDs and sequences from {conf.organism_protein_list}...")
-  # organism_protein_list: dict = fasta.extractRecords(conf.organism_protein_list)
+  ###############
+  #   STARTUP   #
+  ###############
+  currentdir = os.path.dirname(os.path.realpath(__file__))
+  sys.path.append(os.path.dirname(currentdir))
+  logging.info("Starting MIPFINDER v2.0")
+  logging.debug(f"Working directory is {os.getcwd()}")
+  start_time = datetime.datetime.now()
 
-  # logging.info(f"Extracting all known microproteins from {conf.known_mips}")
-  # known_mips: dict = fasta.extractRecords(conf.known_mips)
+
+  ###########################
+  #   KNOWN MICROPROTEINS   #
+  ###########################
+
+  logging.info(f"Extracting all known microproteins from {conf.known_mips}")
+  known_mips: dict = fasta.extractRecords(conf.known_mips)
+
 
   ########################
   #   ARAPORT DATABASE   #
   ########################
 
-  # Read in Araport database protein records and construct Protein objects from them
+  # Read in Araport database protein records and construct Protein objects from them.
+  # Araport database contains all known Arabidopsis thaliana proteins in FASTA format.
   araport_fasta_records: dict = fasta.extractRecords(conf.araport_database)
 
   logging.info(f"Extracting protein information from Araport FASTA headers")
@@ -112,13 +118,7 @@ def main():
   total_entries: int = sum([1 for v in Protein.proteins.values()])
   logging.info(f"Created {total_entries} unique protein entries.")
 
-  small_proteins: Dict[Protein] = Protein.filterByLength(1, 150)
-  medium_proteins: Dict[Protein] = Protein.filterByLength(151, 300)
-  large_proteins: Dict[Protein] = Protein.filterByLength(301)
 
-  print(len(small_proteins))
-  print(len(medium_proteins))
-  print(len(large_proteins))
 
   #######################
   #   STRING DATABASE   #
@@ -136,28 +136,46 @@ def main():
     # print(f"Finding interactors for {protein_id}")
     string_database.findInteractors(protein_obj)
 
-
   #############################
   #   INTERPROSCAN DATABASE   #
   #############################
 
-  
-
-  # Create two groups of proteins, one with those of sequence length shorter than that of 
-  # conf.maximum_mip_length and the other with sequence longer than the conf.minimum_ancestor_length
-  potential_mips = {}
-  potential_ancestors = {}
 
 
-  # fasta.createFile(potential_mips, "blast/mip_proteins.fasta")
-  # fasta.createFile(potential_ancestors, "blast/ancestor_proteins.fasta")
 
-  # blast.createDatabase("blast/ancestor_proteins.fasta", "ancestor_db")
-  # blast.run("blastp -query blast/mip_proteins.fasta -db blast/ancestor_db -outfmt 7 -out mip_blast.txt")
+  ##########################
+  #   FIND MICROPROTEINS   #
+  ##########################
 
-  # interpro.processTSV()
+  # Hypothetical next steps:
 
-  # print(potential_ancestors)
+  # USE INTERPROSCAN DATABASE TO ANNOTATE ALL DOMAINS IN A PROTEIN
+  # THEN... 
+  # single_domain_proteins = {}
+  # two_domain_proteins = {}
+  # all_other_proteins = {}
+  # for protein_id, protein_obj in Protein.proteins.items():
+  #   if protein_obj.domains == 1:
+  #     single_domain_proteins[protein_id] = protein_obj
+  #   else if protein_obj.domains == 2:
+  #     two_domain_proteins[protein_id] = protein_obj
+  #   else if protein_obj.domains > 2:
+  #     all_other_proteins[protein_id] = protein_obj
+
+  # TODO: Do this step after sorting proteins according to their domain numbers
+  # small_proteins: Dict[Protein] = Protein.filterByLength(1, 150)
+  # medium_proteins: Dict[Protein] = Protein.filterByLength(151, 300)
+  # large_proteins: Dict[Protein] = Protein.filterByLength(301)
+
+  # print(len(small_proteins))
+  # print(len(medium_proteins))
+  # print(len(large_proteins))
+
+
+
+  # As a positive control, finally we have to make sure that we have actually found all the known
+  # microproteins
+  # for protein in known_microproteins:
 
   # Wrap up
   end_time = datetime.datetime.now()

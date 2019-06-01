@@ -34,7 +34,7 @@ class Config:
     # STRING configuration section
     self.string_database: str = config['STRING']['string_database']  # Required
     self.string_protein_aliases: str = config['STRING']['string_protein_aliases']  # Required
-    self.string_to_uniprot: str = config['STRING']['string_to_uniprot']
+    self.string_id_to_uniprot: str = config['STRING']['string_id_to_uniprot']
     self.string_cutoff: int = config.getint('STRING', 'string_cutoff')
 
     # TAIR configuration section

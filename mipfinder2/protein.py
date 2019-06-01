@@ -9,7 +9,7 @@ class Protein(object):
   # identifier is made up of the protein's genomic locus tag and sequence version.
   proteins: Dict[str, List[Protein]] = {}
 
-  def __init__(self, sequence: str, araport_tag: str, sequence_version: int, desc: str):
+  def __init__(self, sequence: str, genomic_locus_tag: str, sequence_version: int, desc: str):
     """Class Protein is a wrapper for protein information.
 
     Proteins are identified by their unique ID made up from their genomic locus tag and their
@@ -17,39 +17,82 @@ class Protein(object):
 
     Args:
       sequence: Protein sequence in string format.
-      araport_tag: The araport genomic locus tag of the protein.
+      genomic_locus_tag: The araport genomic locus tag of the protein.
       sequence_version: The sequence version of the protein sequence. This is to distinguish
           splice variants of the same gene.
       desc: Description of protein function.
 
     """
-    self.unique_id: str = araport_tag + "." + str(sequence_version)
-    self.sequence: str = sequence 
-    self.araport_tag: str = araport_tag 
-    self.sequence_version: int = int(sequence_version)
-    self.length: int = len(sequence)
-    self.desc: str = desc
+    self._sequence: str = sequence 
+    self._genomic_locus_tag: str = genomic_locus_tag 
+    self._sequence_version: int = int(sequence_version)
+    self._desc: str = desc
+
+    self._unique_id: str = genomic_locus_tag + "." + str(sequence_version)
+    self._length: int = len(sequence)
+    self._uniprot_accession: str = ""
+
+    # The list contains the unique_ids of other interacting proteins
+    self._interactors: List[str] = []
 
     # self.domains: List[str] = None
-    # self.nr_of_domains = None
+    # self.nr_of_domains = len(self._domains)
 
-    # Unique IDs (genomic locus tag + version number) of all known interactors
-    self.interactors: List[str] = []
-
-    # self.uniprot_accession: str = None
-    
-    #  
-    if self.unique_id not in Protein.proteins:
-      Protein.proteins[self.unique_id] = self
+    if self._unique_id not in Protein.proteins:
+      Protein.proteins[self._unique_id] = self
     else:
-      logging.error(f"Error: {self.unique_id} already exists. Two different proteins should not "
+      logging.error(f"Error: {self._unique_id} already exists. Two different proteins should not "
                     f"share the same unique ID!")
+
+  ##################
+  #   PROPERTIES   #
+  ##################
+
+  @property
+  def sequence(self):
+    return self._sequence
+
+  @property
+  def genomic_locus_tag(self):
+    return self._genomic_locus_tag
+
+  @property
+  def sequence_version(self):
+    return self._sequence_version
+  
+  @property
+  def desc(self):
+    return self._desc
+  
+  @property
+  def unique_id(self):
+    return self._unique_id
+
+  @property
+  def length(self):
+    return self._length
+
+  @property
+  def uniprot_accession(self):
+    return self._uniprot_accession 
+
+  @property
+  def interactors(self):
+    return self._interactors
+
+  @interactors.setter
+  def interactors(self, interaction_partners: List[str]):
+    self._interactors += interaction_partners
+
+  ###############
+  #   METHODS   #
+  ###############
 
   @classmethod
   def filterByLength(cls,
                      min_length: int=0,
                      max_length: float=float('inf'),
-                     protein_data: Dict[str, List[Protein]]=proteins) -> Dict[str, List[Protein]]:
+                     protein_data: Dict[str, List[Protein]]=proteins) -> Dict[str, Protein]:
     """Filters all created Protein objects by length.
 
     Args:

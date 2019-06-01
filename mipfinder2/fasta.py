@@ -11,12 +11,11 @@ def createFile(sequences: Dict[str, str], output_file: str):
         creates a new file. The file will be created in the current directory.
   
   """
-  logging.info(f"Writing {output}.fasta")
-  with open(output, 'w') as f:
-    file_contents: list  = []
+  logging.info(f"Writing {output_file}.fasta")
+  with open(output_file, 'w') as f:
     for protein_id, protein_sequence in sequences.items():
       f.write(f">{protein_id}\n{protein_sequence}\n")
-  logging.info(f"Finished writing {output}.fasta")
+  logging.info(f"Finished writing {output_file}.fasta")
 
 def extractRecords(fasta_file: str) -> Dict[str, str]:
   """Extracts all FASTA records from a file into individual entries.
